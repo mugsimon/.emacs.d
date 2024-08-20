@@ -1,32 +1,32 @@
 ;;; emacs setting file
 ;;; mugsimon
 
-;;;;;;;;;;;;;;;;;;;;;;;
-;;; package manager ;;;
-;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ package manager                                               ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (require 'package)
 (setq package-archives
-      '(("melpa-stable" . "https://stable.melpa.org/packages/")
+      '(("melpa" . "https://melpa.org/packages/")
         ("org" . "https://orgmode.org/elpa/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - start up message ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - start up message                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq inhibit-startup-message t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - mode line ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - mode line                                            ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; show line num
 (line-number-mode t)
 ;; show column num
 (column-number-mode t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - isearch ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - isearch                                              ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Delete search string with C-d
 (define-key isearch-mode-map (kbd "C-d") 'isearch-delete-char)
 ;; Edit search string with C-e
@@ -34,27 +34,140 @@
 ;; Completion search string with TAB
 (define-key isearch-mode-map (kbd "TAB") 'isearch-yank-word)
 
-;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - theme ;;;
-;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - theme                                                ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (load-theme 'wombat t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - window transparency ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - window transparency                                  ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-to-list 'default-frame-alist '(alpha . (0.90 0.85)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; screen - line number ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ screen - line number                                          ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (if (version<= "26.0.50" emacs-version)
     (global-display-line-numbers-mode))
 (setq display-line-numbers-width-start t)
 (setq display-line-numbers-width 4)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Japanese input (for Japanese users) ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ file - backup                                                 ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; Backup(~)
+(setq make-backup-files   t)  ;; auto backup
+(setq version-control     t)  ;; add version to backup file
+(setq kept-new-versions   3)  ;; number of latest backup files
+(setq kept-old-versions   0)  ;; number of oldest backup files
+(setq delete-old-versions t)  ;; delete backup file
+;; backup directory
+(setq backup-directory-alist
+      (cons (cons "\\.*$" (expand-file-name "/tmp/emacsbk"))
+            backup-directory-alist))
+;;; Auto Save
+;; auto backup while editing
+(setq backup-inhibited nil)
+;; not delete auto backup file when close
+(setq delete-auto-save-files nil)
+;; not add specific file name and prefix for auto backup
+(setq auto-save-list-file-name nil)
+(setq auto-save-list-file-prefix nil)
+;; backup interval (second)
+(setq auto-save-timeout 3)
+;; backup interval key stroke
+(setq auto-save-interval 100)
+;; editing file directory(##)
+(setq auto-save-file-name-transforms
+      `((".*" ,(expand-file-name "/tmp/emacsbk") t)))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ file - lockfile                                               ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; make no lockfile
+(setq create-lockfiles nil)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ scroll                                                        ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; keep kersol when scrolling
+(setq scroll-preserve-screen-position t)
+;; small scroll
+(setq scroll-conservatively 10000)
+;; line overlay when scrolling
+(setq next-screen-context-lines 1)
+;; keep redisplay
+(setq redisplay-dont-pause t)
+;; horizontal scroll margin
+(setq hscroll-margin 1)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ auto complete                                                 ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(unless (package-installed-p 'auto-complete)
+  (package-refresh-contents)
+  (package-install 'auto-complete))
+;; auto-complete
+(require 'auto-complete-config)
+(ac-config-default)
+;; add complete mode
+(add-to-list 'ac-modes 'text-mode)
+(add-to-list 'ac-modes 'org-mode)
+(add-to-list 'ac-modes 'fundamental-mode)
+(add-to-list 'ac-modes 'nxml-mode)
+;; complete with TAB key
+(ac-set-trigger-key "TAB")
+;; complete menu
+(setq ac-use-menu-map t)
+(setq ac-use-fuzzy t)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ symbol highlight                                              ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(unless (package-installed-p 'highlight-symbol)
+  (package-refresh-contents)
+  (package-install 'highlight-symbol))
+(require 'highlight-symbol)
+;; highlight delay
+(setq highlight-symbol-idle-delay 0.5)
+;; auto highlight
+(add-hook 'prog-mode-hook 'highlight-symbol-mode)
+;; M-p/M-n move kersol between symbols
+(add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tabbar mode                                                   ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(tab-bar-mode 1)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ undo tree                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(unless (package-installed-p 'undo-tree)
+  (package-refresh-contents)
+  (package-install 'undo-tree))
+(require 'undo-tree)
+(global-undo-tree-mode t)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ shortcut                                                      ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; C-TAB, C-Shift-TAB buffer switch
+(global-set-key (kbd "<C-tab>") '(lambda() (interactive) (bury-buffer)))
+(global-set-key (kbd "<C-iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
+;; C-; comment out/in
+(defun one-line-comment ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (set-mark (point))
+    (end-of-line)
+    (comment-or-uncomment-region (region-beginning) (region-end))))
+(global-set-key (kbd "C-;") 'one-line-comment)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ Japanese input (for Japanese users)                           ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (unless (package-installed-p 'mozc)
   (package-refresh-contents)
   (package-install 'mozc))
