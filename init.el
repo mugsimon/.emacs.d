@@ -12,6 +12,20 @@
 (package-initialize)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ language - coding system                                      ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; default 
+(set-default-coding-systems 'utf-8-unix)
+;; text file, new buffer
+(prefer-coding-system 'utf-8-unix)
+;; file name
+(set-file-name-coding-system 'utf-8-unix)
+;; keyboard input
+(set-keyboard-coding-system 'utf-8-unix)
+;; subprocess
+(setq default-process-coding-system '(undecided-dos . utf-8-unix))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq inhibit-startup-message t)
