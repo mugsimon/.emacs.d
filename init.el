@@ -148,13 +148,14 @@
   (package-install 'undo-tree))
 (require 'undo-tree)
 (global-undo-tree-mode t)
+; Undo C-/, Redo C-S-/
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ shortcut                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; C-TAB, C-Shift-TAB buffer switch
-(global-set-key (kbd "<C-tab>") '(lambda() (interactive) (bury-buffer)))
-(global-set-key (kbd "<C-iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
+(global-set-key (kbd "C-<tab>") '(lambda() (interactive) (bury-buffer)))
+(global-set-key (kbd "C-S-<iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
 ;; C-; comment out/in
 (defun one-line-comment ()
   (interactive)
@@ -184,9 +185,12 @@
 ;; 無変換キーでmozcオフ
 (defun ime-off ()
   (interactive)
-  (if current-input-method
-      (toggle-input-method)))
+  (when current-input-method
+    (toggle-input-method)))
 (global-set-key [muhenkan] 'ime-off)
+(add-hook 'mozc-mode-hook
+	  (lambda ()
+	    (define-key mozc-mode-map [muhenkan] 'ime-off)))
 ;; フォント
 (set-fontset-font t 'japanese-jisx0208 "Migu 1M")
 
