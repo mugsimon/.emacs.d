@@ -162,6 +162,11 @@
   (package-install 'undo-tree))
 (require 'undo-tree)
 (global-undo-tree-mode t)
+;; save history file in specified directory
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+;; if the directory no exist, then make it
+(unless (file-exists-p "~/.emacs.d/undo-tree-history/")
+  (make-directory "~/.emacs.d/undo-tree-history/" t))
 ; Undo C-/, Redo C-S-/
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
