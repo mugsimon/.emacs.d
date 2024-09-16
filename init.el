@@ -135,12 +135,23 @@
 (setq ac-use-menu-map t)
 (setq ac-use-fuzzy t)
 
+;; company
+;; (unless (package-installed-p 'company)
+;;   (package-refresh-contents)
+;;   (package-install 'company))
+;; (require 'company)
+;; (global-company-mode)
+;; (setq company-idle-delay 0
+;;       company-require-match 'never
+;;       company-selection-wrap-around t
+;;       company-tooltip-align-annotations t)
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (unless (package-installed-p 'highlight-symbol)
-  (package-install 'highlight-symbol))
   (package-refresh-contents)
+  (package-install 'highlight-symbol))
 (require 'highlight-symbol)
 ;; highlight delay
 (setq highlight-symbol-idle-delay 0.5)
@@ -248,3 +259,4 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
