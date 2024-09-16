@@ -135,17 +135,6 @@
 (setq ac-use-menu-map t)
 (setq ac-use-fuzzy t)
 
-;; company
-;; (unless (package-installed-p 'company)
-;;   (package-refresh-contents)
-;;   (package-install 'company))
-;; (require 'company)
-;; (global-company-mode)
-;; (setq company-idle-delay 0
-;;       company-require-match 'never
-;;       company-selection-wrap-around t
-;;       company-tooltip-align-annotations t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -252,11 +241,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages '(mozc)))
+ '(package-selected-packages '(display-theme mozc)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
