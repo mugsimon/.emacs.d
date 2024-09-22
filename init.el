@@ -136,17 +136,22 @@
 ;; (setq ac-use-fuzzy t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ company                                                       ;;;
+;;; @ company mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; company
 (unless (package-installed-p 'company)
   (package-refresh-contents)
   (package-install 'company))
 (require 'company)
+;; enable company-mode globally
 (global-company-mode)
+;; set delay before completion suggestions appear
 (setq company-idle-delay 0.1)
+;; minimum prefix length before suggestions are shown
 (setq company-minimum-prefix-length 2)
+;; enable wrap-around selection in completion candidates
 (setq company-selection-wrap-around t)
+;; non exact match
 (setq company-require-match 'never)
 (add-to-list 'company-backends 'company-clang)
 
@@ -159,9 +164,12 @@
 (let ((irony-server-install-prefix "~/.emacs.d/irony"))
   (unless (file-exists-p irony-server-install-prefix)
     (call-interactively 'irony-install-server)))
+;; enable irony mode
 (add-hook 'c-mode-hook 'irony-mode)
 (add-hook 'c++-mode-hook 'irony-mode)
+;; set up company-mode with irony-mode commands
 (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
 ;; integrate company-mode
 (unless (package-installed-p 'company-irony)
   (package-refresh-contents)
