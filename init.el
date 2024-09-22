@@ -118,22 +118,56 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto complete                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'auto-complete)
+;; (unless (package-installed-p 'auto-complete)
+;;   (package-refresh-contents)
+;;   (package-install 'auto-complete))
+;; ;; auto-complete
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+;; ;; add complete mode
+;; (add-to-list 'ac-modes 'text-mode)
+;; (add-to-list 'ac-modes 'org-mode)
+;; (add-to-list 'ac-modes 'fundamental-mode)
+;; (add-to-list 'ac-modes 'nxml-mode)
+;; ;; complete with TAB key
+;; (ac-set-trigger-key "TAB")
+;; ;; complete menu
+;; (setq ac-use-menu-map t)
+;; (setq ac-use-fuzzy t)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ company                                                       ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; company
+(unless (package-installed-p 'company)
   (package-refresh-contents)
-  (package-install 'auto-complete))
-;; auto-complete
-(require 'auto-complete-config)
-(ac-config-default)
-;; add complete mode
-(add-to-list 'ac-modes 'text-mode)
-(add-to-list 'ac-modes 'org-mode)
-(add-to-list 'ac-modes 'fundamental-mode)
-(add-to-list 'ac-modes 'nxml-mode)
-;; complete with TAB key
-(ac-set-trigger-key "TAB")
-;; complete menu
-(setq ac-use-menu-map t)
-(setq ac-use-fuzzy t)
+  (package-install 'company))
+(require 'company)
+(global-company-mode)
+(setq company-idle-delay 0.1)
+(setq company-minimum-prefix-length 2)
+(setq company-selection-wrap-around t)
+(setq company-require-match 'never)
+(add-to-list 'company-backends 'company-clang)
+
+;; irony-mode
+(unless (package-installed-p 'irony)
+  (package-refresh-contents)
+  (package-install 'irony))
+(require 'irony)
+;; install irony server if not installed 
+(let ((irony-server-install-prefix "~/.emacs.d/irony"))
+  (unless (file-exists-p irony-server-install-prefix)
+    (call-interactively 'irony-install-server)))
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;; integrate company-mode
+(unless (package-installed-p 'company-irony)
+  (package-refresh-contents)
+  (package-install 'company-irony))
+(add-to-list 'company-backends 'company-irony)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
