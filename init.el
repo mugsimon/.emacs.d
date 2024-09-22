@@ -150,6 +150,41 @@
 (add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tree-sitter                                                   ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; (unless (package-installed-p 'tree-sitter)
+;;   (package-refresh-contents)
+;;   (package-install 'tree-sitter))
+;; (use-package tree-sitter)
+;;   ;; :config
+;;   ;; (setq treesit-font-lock-level 4))
+
+;; (unless (package-installed-p 'tree-sitter-langs)
+;;   (package-refresh-contents)
+;;   (package-install 'tree-sitter-langs))
+
+;; (use-package tree-sitter-langs
+;;   :ensure t)
+
+(unless (package-installed-p 'treesit-auto)
+  (package-refresh-contents)
+  (package-install 'treesit-auto))
+;; (use-package treesit-auto
+;;   :config
+;;   (global-treesit-auto-mode))
+
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-font-lock-level 4)
+  :config
+  (setq treesit-auto-install 'prompt)
+  (global-treesit-auto-mode))
+
+
+
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (tab-bar-mode 1)
