@@ -155,58 +155,78 @@
 ;; (unless (package-installed-p 'tree-sitter)
 ;;   (package-refresh-contents)
 ;;   (package-install 'tree-sitter))
-;; (use-package tree-sitter)
-;;   ;; :config
-;;   ;; (setq treesit-font-lock-level 4))
+
+;; ;; (use-package tree-sitter)
+;; ;;   :config
+;; ;;   (setq treesit-font-lock-level 4))
 
 ;; (unless (package-installed-p 'tree-sitter-langs)
 ;;   (package-refresh-contents)
 ;;   (package-install 'tree-sitter-langs))
 
-;; (use-package tree-sitter-langs
-;;   :ensure t)
 
-(unless (package-installed-p 'treesit-auto)
-  (package-refresh-contents)
-  (package-install 'treesit-auto))
+;; (require 'tree-sitter)
+;; (require 'tree-sitter-langs)
+
+;; (setq treesit-font-lock-level 4)
+
+;; (add-hook 'c-mode-hook #'tree-sitter-mode)
+;; (add-hook 'c-mode-hook #'tree-sitter-hl-mode)
+
+
+
+;; (use-package tree-sitter-hl
+;;   :ensure t
+;;   :hook (tree-sitter-after-on . tree-sitter-hl-mode))
+
+
+;; (unless (package-installed-p 'treesit-auto)
+;;   (package-refresh-contents)
+;;   (package-install 'treesit-auto))
+;; (require 'treesit-auto)
+;; (global-treesit-auto-mode)
+
 ;; (use-package treesit-auto
 ;;   :config
 ;;   (global-treesit-auto-mode))
 
-(setq treesit-language-source-alist
-  '((bash "https://github.com/tree-sitter/tree-sitter-bash")
-    (c "https://github.com/tree-sitter/tree-sitter-c")
-    (cmake "https://github.com/uyha/tree-sitter-cmake")
-    (common-lisp "https://github.com/theHamsta/tree-sitter-commonlisp")
-    (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
-    (css "https://github.com/tree-sitter/tree-sitter-css")
-    (csharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
-    (elisp "https://github.com/Wilfred/tree-sitter-elisp")
-    (go "https://github.com/tree-sitter/tree-sitter-go")
-    (go-mod "https://github.com/camdencheek/tree-sitter-go-mod")
-    (html "https://github.com/tree-sitter/tree-sitter-html")
-    (js . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-    (json "https://github.com/tree-sitter/tree-sitter-json")
-    (lua "https://github.com/Azganoth/tree-sitter-lua")
-    (make "https://github.com/alemuller/tree-sitter-make")
-    (markdown "https://github.com/ikatyang/tree-sitter-markdown")
-    (python "https://github.com/tree-sitter/tree-sitter-python")
-    (r "https://github.com/r-lib/tree-sitter-r")
-    (rust "https://github.com/tree-sitter/tree-sitter-rust")
-    (toml "https://github.com/tree-sitter/tree-sitter-toml")
-    (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-    (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-    (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+;; (setq treesit-language-source-alist
+;;   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+;;     (c "https://github.com/tree-sitter/tree-sitter-c")
+;;     (cmake "https://github.com/uyha/tree-sitter-cmake")
+;;     (common-lisp "https://github.com/theHamsta/tree-sitter-commonlisp")
+;;     (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+;;     (css "https://github.com/tree-sitter/tree-sitter-css")
+;;     (csharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
+;;     (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+;;     (go "https://github.com/tree-sitter/tree-sitter-go")
+;;     (go-mod "https://github.com/camdencheek/tree-sitter-go-mod")
+;;     (html "https://github.com/tree-sitter/tree-sitter-html")
+;;     (js . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+;;     (json "https://github.com/tree-sitter/tree-sitter-json")
+;;     (lua "https://github.com/Azganoth/tree-sitter-lua")
+;;     (make "https://github.com/alemuller/tree-sitter-make")
+;;     (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+;;     (python "https://github.com/tree-sitter/tree-sitter-python")
+;;     (r "https://github.com/r-lib/tree-sitter-r")
+;;     (rust "https://github.com/tree-sitter/tree-sitter-rust")
+;;     (toml "https://github.com/tree-sitter/tree-sitter-toml")
+;;     (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+;;     (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+;;     (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
-(use-package treesit-auto
-  :ensure t
-  :custom
-  (treesit-font-lock-level 4)
-  :config
-  (setq treesit-auto-install 'prompt)
-  (global-treesit-auto-mode))
+;; (use-package treesit-auto
+;;   :ensure t
+;;   :custom
+;;   (treesit-font-lock-level 4)
+;;   :config
+;;   (setq treesit-auto-install 'prompt)
+;;   (global-treesit-auto-mode))
 
-
+ (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+    (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+    (add-to-list 'major-mode-remap-alist
+                 '(c-or-c++-mode . c-or-c++-ts-mode))
 
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
