@@ -192,6 +192,23 @@
 (add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tree-sitter                                                   ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; https://emacs-tree-sitter.github.io/
+(unless (package-installed-p 'tree-sitter)
+  (package-refresh-contents)
+  (package-install 'tree-sitter))
+(require 'tree-sitter)
+
+(unless (package-installed-p 'tree-sitter-langs)
+  (package-refresh-contents)
+  (package-install 'tree-sitter-langs))
+(require 'tree-sitter-langs)
+
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (tab-bar-mode 1)
