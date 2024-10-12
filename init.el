@@ -153,29 +153,30 @@
 (setq company-selection-wrap-around t)
 ;; non exact match
 (setq company-require-match 'never)
-(add-to-list 'company-backends 'company-clang)
 
-;; irony-mode
-(unless (package-installed-p 'irony)
-  (package-refresh-contents)
-  (package-install 'irony))
-(require 'irony)
-;; install irony server if not installed 
-(let ((irony-server-install-prefix "~/.emacs.d/irony"))
-  (unless (file-exists-p irony-server-install-prefix)
-    (call-interactively 'irony-install-server)))
-;; enable irony mode
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'c++-mode-hook 'irony-mode)
-;; set up company-mode with irony-mode commands
-(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;; (add-to-list 'company-backends 'company-clang)
 
-;; integrate company-mode
-(unless (package-installed-p 'company-irony)
-  (package-refresh-contents)
-  (package-install 'company-irony))
-(add-to-list 'company-backends 'company-irony)
-(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+;; ;; irony-mode
+;; (unless (package-installed-p 'irony)
+;;   (package-refresh-contents)
+;;   (package-install 'irony))
+;; (require 'irony)
+;; ;; install irony server if not installed 
+;; (let ((irony-server-install-prefix "~/.emacs.d/irony"))
+;;   (unless (file-exists-p irony-server-install-prefix)
+;;     (call-interactively 'irony-install-server)))
+;; ;; enable irony mode
+;; (add-hook 'c-mode-hook 'irony-mode)
+;; (add-hook 'c++-mode-hook 'irony-mode)
+;; ;; set up company-mode with irony-mode commands
+;; (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+
+;; ;; integrate company-mode
+;; (unless (package-installed-p 'company-irony)
+;;   (package-refresh-contents)
+;;   (package-install 'company-irony))
+;; (add-to-list 'company-backends 'company-irony)
+;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
