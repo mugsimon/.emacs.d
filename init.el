@@ -136,7 +136,7 @@
 ;; (setq ac-use-fuzzy t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ company mode                                                  ;;;
+;;; @ auto completion                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; company
 (unless (package-installed-p 'company)
@@ -155,6 +155,19 @@
 (setq company-require-match 'never)
 ;; automatic expand
 (setq company-auto-expand t)
+
+;; lsp-mode
+(unless (package-installed-p 'lsp-mode)
+  (package-refresh-contents)
+  (package-install 'lsp-mode))
+(require 'lsp-mode)
+
+;; Enable lsp-mode for C and C++
+(add-hook 'c-mode-hook #'lsp)
+(add-hook 'c++-mode-hook #'lsp)
+;; Set clangd as the LSP server
+(setq lsp-clients-clangd-executable "clangd")
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
