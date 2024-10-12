@@ -146,14 +146,17 @@
 ;; enable company-mode globally
 (global-company-mode)
 ;; set delay before completion suggestions appear
-(setq company-idle-delay 0.1)
+(setq company-idle-delay 0.0)
 ;; minimum prefix length before suggestions are shown
 (setq company-minimum-prefix-length 2)
 ;; enable wrap-around selection in completion candidates
 (setq company-selection-wrap-around t)
 ;; non exact match
 (setq company-require-match 'never)
+;; automatic expand
+(setq company-auto-expand t)
 
+;; (define-key company-active-map [tab] 'company-complete-selection)
 ;; (add-to-list 'company-backends 'company-clang)
 
 ;; ;; irony-mode
