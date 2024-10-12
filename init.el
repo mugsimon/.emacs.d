@@ -156,31 +156,6 @@
 ;; automatic expand
 (setq company-auto-expand t)
 
-;; (define-key company-active-map [tab] 'company-complete-selection)
-;; (add-to-list 'company-backends 'company-clang)
-
-;; ;; irony-mode
-;; (unless (package-installed-p 'irony)
-;;   (package-refresh-contents)
-;;   (package-install 'irony))
-;; (require 'irony)
-;; ;; install irony server if not installed 
-;; (let ((irony-server-install-prefix "~/.emacs.d/irony"))
-;;   (unless (file-exists-p irony-server-install-prefix)
-;;     (call-interactively 'irony-install-server)))
-;; ;; enable irony mode
-;; (add-hook 'c-mode-hook 'irony-mode)
-;; (add-hook 'c++-mode-hook 'irony-mode)
-;; ;; set up company-mode with irony-mode commands
-;; (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-
-;; ;; integrate company-mode
-;; (unless (package-installed-p 'company-irony)
-;;   (package-refresh-contents)
-;;   (package-install 'company-irony))
-;; (add-to-list 'company-backends 'company-irony)
-;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
