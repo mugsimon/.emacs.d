@@ -136,7 +136,7 @@
 ;; (setq ac-use-fuzzy t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ auto completion                                               ;;;
+;;; @ company mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; company
 (unless (package-installed-p 'company)
@@ -156,6 +156,9 @@
 ;; automatic expand
 (setq company-auto-expand t)
 
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ lsp mode                                                      ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; lsp-mode
 (unless (package-installed-p 'lsp-mode)
   (package-refresh-contents)
@@ -167,6 +170,20 @@
 (add-hook 'c++-mode-hook #'lsp)
 ;; Set clangd as the LSP server
 (setq lsp-clients-clangd-executable "clangd")
+
+;; Enable lsp-mode for Python
+(unless (package-installed-p 'lsp-pyright)
+  (package-refresh-contents)
+  (package-install 'lsp-pyright))
+(use-package lsp-pyright
+  :ensure t
+  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
+;; Use conda environment
+(setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+
 
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
