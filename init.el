@@ -148,7 +148,7 @@
 ;; set delay before completion suggestions appear
 (setq company-idle-delay 0.0)
 ;; minimum prefix length before suggestions are shown
-(setq company-minimum-prefix-length 2)
+(setq company-minimum-prefix-length 1)
 ;; enable wrap-around selection in completion candidates
 (setq company-selection-wrap-around t)
 ;; non exact match
@@ -158,7 +158,7 @@
 ;; show frequently used word
 (setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
 ;; enable tab-and-go
-(company-tng-configure-default)
+;; (company-tng-configure-default)
 ;; Use Enter/Return to complete the current selection
 (define-key company-active-map (kbd "RET") 'company-complete-selection)
 (define-key company-active-map (kbd "<return>") 'company-complete-selection)
