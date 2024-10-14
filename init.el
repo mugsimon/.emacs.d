@@ -157,6 +157,8 @@
 (setq company-auto-expand t)
 ;; show frequently used word
 (setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
+;; enable tab-and-go
+(company-tng-configure-default)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
@@ -185,8 +187,6 @@
                           (lsp))))  ; or lsp-deferred
 ;; Use conda environment
 (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
-
-
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
