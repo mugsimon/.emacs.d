@@ -155,6 +155,8 @@
 (setq company-require-match 'never)
 ;; automatic expand
 (setq company-auto-expand t)
+;; show frequently used word
+(setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
