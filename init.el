@@ -159,6 +159,9 @@
 (setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
 ;; enable tab-and-go
 (company-tng-configure-default)
+;; Use Enter/Return to complete the current selection
+(define-key company-active-map (kbd "RET") 'company-complete-selection)
+(define-key company-active-map (kbd "<return>") 'company-complete-selection)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
