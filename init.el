@@ -218,9 +218,15 @@
   (package-refresh-contents)
   (package-install 'tree-sitter-langs))
 (require 'tree-sitter-langs)
-
+;; use tree-sitter all mode
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+;; Some syntax highlight is incorrect without this setting(C)
+(setq tree-sitter-hl-use-font-lock-keywords nil)
+
+;; Define custom grammar mapping for Scheme files
+(add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
