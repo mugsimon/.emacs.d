@@ -173,12 +173,15 @@
 (require 'lsp-mode)
 
 ;; Enable lsp-mode for C and C++
+;; sudo apt install clangd
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
 ;; Set clangd as the LSP server
 (setq lsp-clients-clangd-executable "clangd")
 
 ;; Enable lsp-mode for Python
+;; sudo apt install -y nodejs npm
+;; sudo npm install -g pyright
 (unless (package-installed-p 'lsp-pyright)
   (package-refresh-contents)
   (package-install 'lsp-pyright))
@@ -188,8 +191,8 @@
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp))))  ; or lsp-deferred
-;; Use conda environment
-(setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+;; ;; Use conda environment
+;; (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
@@ -224,7 +227,7 @@
 ;; Some syntax highlight is incorrect without this setting(C)
 (setq tree-sitter-hl-use-font-lock-keywords nil)
 
-;; Define custom grammar mapping for Scheme files
+;; Define custom grammar mapping for Scheme files with racket
 (add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
 
 
