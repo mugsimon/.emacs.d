@@ -192,7 +192,11 @@
                           (require 'lsp-pyright)
                           (lsp))))  ; or lsp-deferred
 ;; ;; Use conda environment
-;; (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+;; mkdir -p ~/miniconda3
+;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+;; rm ~/miniconda3/miniconda.sh
+(setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
@@ -224,7 +228,7 @@
 ;; use tree-sitter all mode
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-;; Some syntax highlight is incorrect without this setting(C)
+;; Some syntax highlights are incorrect without this setting(Cpp, js)
 (setq tree-sitter-hl-use-font-lock-keywords nil)
 
 ;; Define custom grammar mapping for Scheme files with racket
