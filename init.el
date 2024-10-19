@@ -218,7 +218,7 @@
   (package-install 'highlight-symbol))
 (require 'highlight-symbol)
 ;; highlight delay
-(setq highlight-symbol-idle-delay 0.5)
+(setq highlight-symbol-idle-delay 0.0)
 ;; auto highlight
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 ;; M-p/M-n move kersol between symbols
@@ -245,7 +245,6 @@
 
 ;; Define custom grammar mapping for Scheme files with racket
 (add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
-
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
@@ -313,10 +312,9 @@
   (package-install 'multiple-cursors))
 (require 'multiple-cursors)
 ;; C-u C-M-SPC
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/mark-all-dwim)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
