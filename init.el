@@ -198,6 +198,18 @@
 ;; rm ~/miniconda3/miniconda.sh
 (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
 
+;; Enable lsp-mode for scheme
+;; sudo apt install guile-3.0 guile-3.0-dev
+(unless (package-installed-p 'lsp-scheme)
+  (package-refresh-contents)
+  (package-install 'lsp-scheme))
+(use-package lsp-scheme
+  :ensure t
+  :hook (scheme-mode . (lambda ()
+			 (require 'lsp-scheme)
+			 (lsp-scheme))))
+(setq lsp-scheme-implementation "guile")
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
