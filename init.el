@@ -283,6 +283,7 @@
 ;; C-TAB, C-Shift-TAB buffer switch
 (global-set-key (kbd "C-<tab>") '(lambda() (interactive) (bury-buffer)))
 (global-set-key (kbd "C-S-<iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
+
 ;; C-; comment out/in
 (defun one-line-comment ()
   (interactive)
@@ -292,6 +293,22 @@
     (end-of-line)
     (comment-or-uncomment-region (region-beginning) (region-end))))
 (global-set-key (kbd "C-;") 'one-line-comment)
+
+;; 
+(defun custom-move-beginning-of-line ()
+  (interactive)
+  (if (= (point) (line-beginning-position))
+      (back-to-indentation)
+  (when (<= (point)
+	    (progn (back-to-indentation)
+                   (point)))
+    (move-beginning-of-line 1))))
+(global-set-key (kbd "C-a") 'custom-move-beginning-of-line)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tab space                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq-default indent-tabs-mode nil)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
