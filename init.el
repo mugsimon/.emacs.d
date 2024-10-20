@@ -155,8 +155,10 @@
 (setq company-require-match 'never)
 ;; automatic expand
 (setq company-auto-expand t)
-;; show frequently used word
-(setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
+;; show frequently used word, show prefix match word
+(setq company-transformers '(company-sort-by-occurrence
+                             company-sort-by-backend-importance
+                             company-sort-prefer-same-case-prefix))
 ;; enable tab-and-go
 ;; (company-tng-configure-default)
 ;; Use Enter/Return to complete the current selection
@@ -171,6 +173,10 @@
   (package-refresh-contents)
   (package-install 'lsp-mode))
 (require 'lsp-mode)
+
+;; increase lsp performance
+(setq read-process-output-max (* 1024 1024)) ;; 1mb default:4KB (4096 bytes) 
+
 
 ;; Enable lsp-mode for C and C++
 ;; sudo apt install clangd
@@ -209,6 +215,12 @@
 			 (require 'lsp-scheme)
 			 (lsp-scheme))))
 (setq lsp-scheme-implementation "guile")
+
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ GC Threshold                                                  ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq gc-cons-threshold (* 10 1024 1024)) ;; default (* 800 1024)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
