@@ -159,11 +159,20 @@
 (setq company-transformers '(company-sort-by-occurrence
                              company-sort-by-backend-importance
                              company-sort-prefer-same-case-prefix))
-;; enable tab-and-go
-;; (company-tng-configure-default)
+
 ;; Use Enter/Return to complete the current selection
 (define-key company-active-map (kbd "RET") 'company-complete-selection)
 (define-key company-active-map (kbd "<return>") 'company-complete-selection)
+;; select condidates with tab key
+(with-eval-after-load 'company
+  (define-key company-active-map
+              (kbd "<tab>")
+              #'company-complete-common-or-cycle)
+  (define-key company-active-map
+              (kbd "<backtab>")
+              (lambda ()
+                (interactive)
+                (company-complete-common-or-cycle -1))))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
@@ -293,8 +302,8 @@
 ;;; @ shortcut                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; C-TAB, C-Shift-TAB buffer switch
-(global-set-key (kbd "C-<tab>") '(lambda() (interactive) (bury-buffer)))
-(global-set-key (kbd "C-S-<iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
+(global-set-key (kbd "C-<tab>") #'(lambda() (interactive) (bury-buffer)))
+(global-set-key (kbd "C-S-<iso-lefttab>") #'(lambda() (interactive) (unbury-buffer)))
 
 ;; C-; comment out/in
 (defun one-line-comment ()
