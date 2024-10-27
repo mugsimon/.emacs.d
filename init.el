@@ -204,13 +204,6 @@
 ;; rm ~/miniconda3/miniconda.sh
 (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
 
-
-;; lsp-ui
-(unless (package-installed-p 'lsp-ui)
-  (package-refresh-contents)
-  (package-install 'lsp-ui))
-(use-package lsp-ui)
-
 ;; Enable lsp-mode for scheme
 ;; sudo apt install guile-3.0 guile-3.0-dev
 (unless (package-installed-p 'lsp-scheme)
@@ -222,6 +215,22 @@
 			 (require 'lsp-scheme)
 			 (lsp-scheme))))
 (setq lsp-scheme-implementation "guile")
+
+;; lsp-ui
+(unless (package-installed-p 'lsp-ui)
+  (package-refresh-contents)
+  (package-install 'lsp-ui))
+(use-package lsp-ui
+  :custom
+  ;; lsp-ui-side-line
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-hover t)
+  )
+;; M-, lsp-ui-peek-jump-backward
+;; M-. show definitions 
+(define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+;; M-? show referances
+(define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
 
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
