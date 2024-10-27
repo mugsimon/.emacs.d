@@ -155,8 +155,10 @@
 (setq company-require-match 'never)
 ;; automatic expand
 (setq company-auto-expand t)
-;; show frequently used word
-(setq company-transformers '(company-sort-by-occurrence company-sort-by-backend-importance))
+;; show frequently used word, show prefix match word
+(setq company-transformers '(company-sort-by-occurrence
+                             company-sort-by-backend-importance
+                             company-sort-prefer-same-case-prefix))
 ;; enable tab-and-go
 ;; (company-tng-configure-default)
 ;; Use Enter/Return to complete the current selection
@@ -172,13 +174,20 @@
   (package-install 'lsp-mode))
 (require 'lsp-mode)
 
+;; increase lsp performance
+(setq read-process-output-max (* 1024 1024)) ;; 1mb default:4KB (4096 bytes) 
+
+
 ;; Enable lsp-mode for C and C++
+;; sudo apt install clangd
 (add-hook 'c-mode-hook #'lsp)
 (add-hook 'c++-mode-hook #'lsp)
 ;; Set clangd as the LSP server
 (setq lsp-clients-clangd-executable "clangd")
 
 ;; Enable lsp-mode for Python
+;; sudo apt install -y nodejs npm
+;; sudo npm install -g pyright
 (unless (package-installed-p 'lsp-pyright)
   (package-refresh-contents)
   (package-install 'lsp-pyright))
@@ -188,14 +197,38 @@
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
                           (lsp))))  ; or lsp-deferred
-;; Use conda environment
+;; ;; Use conda environment
+;; mkdir -p ~/miniconda3
+;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+;; rm ~/miniconda3/miniconda.sh
 (setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+
 
 ;; lsp-ui
 (unless (package-installed-p 'lsp-ui)
   (package-refresh-contents)
   (package-install 'lsp-ui))
 (use-package lsp-ui)
+
+;; Enable lsp-mode for scheme
+;; sudo apt install guile-3.0 guile-3.0-dev
+(unless (package-installed-p 'lsp-scheme)
+  (package-refresh-contents)
+  (package-install 'lsp-scheme))
+(use-package lsp-scheme
+  :ensure t
+  :hook (scheme-mode . (lambda ()
+			 (require 'lsp-scheme)
+			 (lsp-scheme))))
+(setq lsp-scheme-implementation "guile")
+
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ GC Threshold                                                  ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
@@ -205,7 +238,7 @@
   (package-install 'highlight-symbol))
 (require 'highlight-symbol)
 ;; highlight delay
-(setq highlight-symbol-idle-delay 0.5)
+(setq highlight-symbol-idle-delay 0.0)
 ;; auto highlight
 (add-hook 'prog-mode-hook 'highlight-symbol-mode)
 ;; M-p/M-n move kersol between symbols
@@ -224,9 +257,14 @@
   (package-refresh-contents)
   (package-install 'tree-sitter-langs))
 (require 'tree-sitter-langs)
-
+;; use tree-sitter all mode
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+;; Some syntax highlights are incorrect without this setting(Cpp, js)
+(setq tree-sitter-hl-use-font-lock-keywords nil)
+
+;; Define custom grammar mapping for Scheme files with racket
+(add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
@@ -265,6 +303,7 @@
 ;; C-TAB, C-Shift-TAB buffer switch
 (global-set-key (kbd "C-<tab>") '(lambda() (interactive) (bury-buffer)))
 (global-set-key (kbd "C-S-<iso-lefttab>") '(lambda() (interactive) (unbury-buffer)))
+
 ;; C-; comment out/in
 (defun one-line-comment ()
   (interactive)
@@ -274,6 +313,22 @@
     (end-of-line)
     (comment-or-uncomment-region (region-beginning) (region-end))))
 (global-set-key (kbd "C-;") 'one-line-comment)
+
+;; 
+(defun custom-move-beginning-of-line ()
+  (interactive)
+  (if (= (point) (line-beginning-position))
+      (back-to-indentation)
+  (when (<= (point)
+	    (progn (back-to-indentation)
+                   (point)))
+    (move-beginning-of-line 1))))
+(global-set-key (kbd "C-a") 'custom-move-beginning-of-line)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tab space                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq-default indent-tabs-mode nil)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
@@ -285,6 +340,18 @@
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ multiple-cursors                                              ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(unless (package-installed-p 'multiple-cursors)
+  (package-refresh-contents)
+  (package-install 'multiple-cursors))
+(require 'multiple-cursors)
+;; C-u C-M-SPC
+(global-set-key (kbd "C-S-c C-S-c") 'mc/mark-all-dwim)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
