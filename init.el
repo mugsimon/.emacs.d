@@ -165,107 +165,109 @@
 (define-key company-active-map (kbd "<return>") 'company-complete-selection)
 ;; select condidates with tab key
 (with-eval-after-load 'company
+  ;; (define-key company-active-map
+  ;;             (kbd "<tab>")
+  ;;             #'company-complete-common-or-cycle)
+  ;; (define-key company-active-map
+  ;;             (kbd "<backtab>")
+  ;;             (lambda ()
+  ;;               (interactive)
+  ;;               (company-complete-common-or-cycle -1)))
   (define-key company-active-map
               (kbd "<tab>")
-              #'company-complete-common-or-cycle)
-  (define-key company-active-map
-              (kbd "<backtab>")
-              (lambda ()
-                (interactive)
-                (company-complete-common-or-cycle -1))))
+              #'company-complete)
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; lsp-mode
-(unless (package-installed-p 'lsp-mode)
-  (package-refresh-contents)
-  (package-install 'lsp-mode))
-(require 'lsp-mode)
-
-;; increase lsp performance
-(setq read-process-output-max (* 1024 1024)) ;; 1mb default:4KB (4096 bytes) 
-
-
-;; Enable lsp-mode for C and C++
-;; sudo apt install clangd
-(add-hook 'c-mode-hook #'lsp)
-(add-hook 'c++-mode-hook #'lsp)
-;; Set clangd as the LSP server
-(setq lsp-clients-clangd-executable "clangd")
-
-;; Enable lsp-mode for Python
-;; sudo apt install -y nodejs npm
-;; sudo npm install -g pyright
-(unless (package-installed-p 'lsp-pyright)
-  (package-refresh-contents)
-  (package-install 'lsp-pyright))
-(use-package lsp-pyright
+(use-package lsp-mode
   :ensure t
-  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
-;; ;; Use conda environment
-;; mkdir -p ~/miniconda3
-;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-;; rm ~/miniconda3/miniconda.sh
-(setq lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
-
-;; Enable lsp-mode for scheme
-;; sudo apt install guile-3.0 guile-3.0-dev
-(unless (package-installed-p 'lsp-scheme)
-  (package-refresh-contents)
-  (package-install 'lsp-scheme))
-(use-package lsp-scheme
-  :ensure t
-  :hook (scheme-mode . (lambda ()
-			 (require 'lsp-scheme)
-			 (lsp-scheme))))
-(setq lsp-scheme-implementation "guile")
+  :init
+  (setq read-process-output-max (* 1024 1024))
+  :custom
+  ;; symbol highlight
+  (lsp-enable-symbol-highlighting t)
+  ;; clangd
+  ;; sudo apt install clangd
+  (lsp-clients-clangd-executable "clangd")
+  :config
+  ;; navigation
+  (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
+  (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
+  :hook (;; Enable lsp-mode for C, C++
+         (c-mode . lsp)
+         (c++-mode . lsp)
+         )
+  :commands lsp)
 
 ;; lsp-ui
-(unless (package-installed-p 'lsp-ui)
-  (package-refresh-contents)
-  (package-install 'lsp-ui))
 (use-package lsp-ui
+  :ensure t
   :custom
   ;; lsp-ui-side-line
   (lsp-ui-sideline-ignore-duplicate t)
   (lsp-ui-sideline-show-hover t)
-  )
-;; M-, lsp-ui-peek-jump-backward
-;; M-. show definitions 
-(define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-;; M-? show referances
-(define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  :config
+  ;; M-, lsp-ui-peek-jump-backward
+  ;; M-. show definitions
+  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+  ;; M-? show referances
+  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+  :commands lsp-ui-mode)
+
+;; Enable lsp-mode for Python
+;; sudo apt install -y nodejs npm
+;; sudo npm install -g pyright
+(use-package lsp-pyright
+  :ensure t
+  :custom
+  (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+  ;; Use conda environment
+  ;; mkdir -p ~/miniconda3
+  ;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+  ;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+  ;; rm ~/miniconda3/miniconda.sh
+  (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
+
+;; Enable lsp-mode for scheme
+;; https://github.com/emacsmirror/lsp-scheme
+;; sudo apt install guile-3.0 guile-3.0-dev
+(use-package lsp-scheme
+  :ensure t
+  :custom
+  (lsp-scheme-implementation "guile")
+  :hook (scheme-mode . (lambda ()
+			 (require 'lsp-scheme)
+			 (lsp-scheme))))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ symbol highlight                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'highlight-symbol)
-  (package-refresh-contents)
-  (package-install 'highlight-symbol))
-(require 'highlight-symbol)
-;; highlight delay
-(setq highlight-symbol-idle-delay 0.0)
-;; auto highlight
-(add-hook 'prog-mode-hook 'highlight-symbol-mode)
-;; M-p/M-n move kersol between symbols
-(add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
+;; (unless (package-installed-p 'highlight-symbol)
+;;   (package-refresh-contents)
+;;   (package-install 'highlight-symbol))
+;; (require 'highlight-symbol)
+;; ;; highlight delay
+;; (setq highlight-symbol-idle-delay 0.0)
+;; ;; auto highlight
+;; (add-hook 'prog-mode-hook 'highlight-symbol-mode)
+;; ;; M-p/M-n move kersol between symbols
+;; (add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tree-sitter                                                   ;;;
