@@ -187,11 +187,6 @@
   :init
   (setq read-process-output-max (* 1024 1024))
   :custom
-  ;; flymake
-  (lsp-diagnostics-provider :flymake)
-  (lsp-modeline-diagnostics-enable t)
-  ;; symbol highlight
-  (lsp-enable-symbol-highlighting t)
   ;; clangd
   ;; sudo apt install clangd
   (lsp-clients-clangd-executable "clangd")
@@ -200,8 +195,7 @@
   (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
   (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
   :hook (;; Enable lsp-mode for C, C++
-         (c-mode . lsp)
-         (c++-mode . lsp)
+         ((c-mode c++-mode) . lsp)
          )
   :commands lsp)
 
@@ -234,8 +228,10 @@
   ;; rm ~/miniconda3/miniconda.sh
   (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
   :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
+                         (require 'lsp-pyright)
+                         ;; avoid python-flymake diagnostics, can't detect import
+                         (setq flymake-diagnostic-functions nil)
+                         (lsp))))  ; or lsp-deferred
 
 ;; Enable lsp-mode for scheme
 ;; https://github.com/emacsmirror/lsp-scheme
@@ -308,7 +304,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tabbar mode                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(tab-bar-mode 1)
+;; (tab-bar-mode 1)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
