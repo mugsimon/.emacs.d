@@ -187,6 +187,9 @@
   :init
   (setq read-process-output-max (* 1024 1024))
   :custom
+  ;; flymake
+  (lsp-diagnostics-provider :flymake)
+  (lsp-modeline-diagnostics-enable t)
   ;; symbol highlight
   (lsp-enable-symbol-highlighting t)
   ;; clangd
@@ -246,9 +249,20 @@
 			 (lsp-scheme))))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ treemacs                                                      ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  :bind (:map global-map
+              ("C-x t t" . treemacs))
+  )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
+;; (add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
@@ -304,8 +318,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto paring                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-(setq skeleton-pair 1)
+(electric-pair-mode t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
