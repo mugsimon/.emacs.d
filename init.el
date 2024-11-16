@@ -116,26 +116,6 @@
 (setq hscroll-margin 1)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ auto complete                                                 ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (unless (package-installed-p 'auto-complete)
-;;   (package-refresh-contents)
-;;   (package-install 'auto-complete))
-;; ;; auto-complete
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-;; ;; add complete mode
-;; (add-to-list 'ac-modes 'text-mode)
-;; (add-to-list 'ac-modes 'org-mode)
-;; (add-to-list 'ac-modes 'fundamental-mode)
-;; (add-to-list 'ac-modes 'nxml-mode)
-;; ;; complete with TAB key
-;; (ac-set-trigger-key "TAB")
-;; ;; complete menu
-;; (setq ac-use-menu-map t)
-;; (setq ac-use-fuzzy t)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ company mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; company
@@ -165,14 +145,6 @@
 (define-key company-active-map (kbd "<return>") 'company-complete-selection)
 ;; select condidates with tab key
 (with-eval-after-load 'company
-  ;; (define-key company-active-map
-  ;;             (kbd "<tab>")
-  ;;             #'company-complete-common-or-cycle)
-  ;; (define-key company-active-map
-  ;;             (kbd "<backtab>")
-  ;;             (lambda ()
-  ;;               (interactive)
-  ;;               (company-complete-common-or-cycle -1)))
   (define-key company-active-map
               (kbd "<tab>")
               #'company-complete)
@@ -266,20 +238,6 @@
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ symbol highlight                                              ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (unless (package-installed-p 'highlight-symbol)
-;;   (package-refresh-contents)
-;;   (package-install 'highlight-symbol))
-;; (require 'highlight-symbol)
-;; ;; highlight delay
-;; (setq highlight-symbol-idle-delay 0.0)
-;; ;; auto highlight
-;; (add-hook 'prog-mode-hook 'highlight-symbol-mode)
-;; ;; M-p/M-n move kersol between symbols
-;; (add-hook 'prog-mode-hook 'highlight-symbol-nav-mode)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tree-sitter                                                   ;;;
