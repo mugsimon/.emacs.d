@@ -388,13 +388,20 @@
 (global-set-key [muhenkan] 'ime-off)
 (add-hook 'mozc-mode-hook
 	  (lambda ()
-	    (define-key mozc-mode-map [muhenkan] 'ime-off)))
+ 	    (define-key mozc-mode-map [muhenkan] 'ime-off)))
 ;; フォント
 (set-fontset-font t 'japanese-jisx0208 "Migu 1M")
 
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ which key                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :hook (after-init . which-key-mode))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ Japanese input (for Japanese users)                           ;;;
+;;; @ custom file load                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror 'nomessage)
