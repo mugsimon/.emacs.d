@@ -196,6 +196,7 @@
   (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
   :hook (;; Enable lsp-mode for C, C++
          ((c-mode c++-mode) . lsp)
+         ((racket-mode) . lsp)
          )
   :commands lsp)
 
@@ -204,10 +205,11 @@
   :ensure t
   :custom
   ;; lsp-ui-side-line
-  (lsp-ui-sideline-ignore-duplicate t)
   (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-ignore-duplicate t)
+  ;; lsp-ui-peek
+  (lsp-ui-peek-enable t)
   :config
-  ;; M-, lsp-ui-peek-jump-backward
   ;; M-. show definitions
   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
   ;; M-? show referances
@@ -359,6 +361,12 @@
     (move-beginning-of-line 1))))
 (global-set-key (kbd "C-a") 'custom-move-beginning-of-line)
 
+;; code jump history
+;; M-,
+(global-set-key (kbd "<mouse-8>") 'xref-go-back)
+;; M-C-,
+(global-set-key (kbd "<mouse-9>") 'xref-go-forward)
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -382,6 +390,10 @@
          ("\\.cmake\\'" . cmake-mode))
   )
 
+;; racket
+(use-package racket-mode
+  :ensure t
+  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
