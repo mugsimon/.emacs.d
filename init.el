@@ -53,10 +53,28 @@
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; (load-theme 'wombat t)
+
 (use-package timu-macos-theme
   :ensure t
   :config
   (load-theme 'timu-macos t))
+
+;; (use-package timu-rouge-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'timu-rouge t))
+
+;; (use-package spacemacs-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'spacemacs-dark t))
+
+;; (use-package sublime-themes
+;;   :ensure t
+;;   :config
+;;   (load-theme 'spolsky t)
+;;   ;; (load-theme 'junio t)
+;;   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
@@ -182,7 +200,7 @@
   :ensure t
   :custom
   ;; lsp-ui-side-line
-  (lsp-ui-sideline-show-hover t)
+  ;; (lsp-ui-sideline-show-hover t)
   (lsp-ui-sideline-ignore-duplicate t)
   ;; lsp-ui-peek
   (lsp-ui-peek-enable t)
@@ -229,12 +247,15 @@
 (use-package treemacs
   :ensure t
   :defer t
-  :init
-  
   :bind (:map global-map
               ("C-x t t" . treemacs))
   )
 
+(use-package treemacs-all-the-icons
+  :after treemacs
+  :ensure t
+  :config
+  (treemacs-load-theme "all-the-icons"))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -270,7 +291,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (tab-bar-mode 1)
 (global-tab-line-mode t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
