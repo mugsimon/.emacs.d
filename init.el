@@ -1,5 +1,5 @@
-;;; emacs setting file
 ;;; mugsimon
+;;; emacs setting file
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ package manager                                               ;;;
@@ -23,7 +23,8 @@
 ;; keyboard input
 (set-keyboard-coding-system 'utf-8-unix)
 ;; subprocess
-(setq default-process-coding-system '(undecided-dos . utf-8-unix))
+;; (setq default-process-coding-system '(undecided-dos . utf-8-unix))
+(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
@@ -51,7 +52,11 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(load-theme 'wombat t)
+;; (load-theme 'wombat t)
+(use-package timu-macos-theme
+  :ensure t
+  :config
+  (load-theme 'timu-macos t))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
@@ -225,6 +230,7 @@
   :ensure t
   :defer t
   :init
+  
   :bind (:map global-map
               ("C-x t t" . treemacs))
   )
@@ -262,9 +268,10 @@
 (add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ tabbar mode                                                   ;;;
+;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; (tab-bar-mode 1)
+(global-tab-line-mode t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
@@ -295,8 +302,10 @@
 ;;; @ shortcut                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; C-TAB, C-Shift-TAB buffer switch
-(global-set-key (kbd "C-<tab>") #'(lambda() (interactive) (bury-buffer)))
-(global-set-key (kbd "C-S-<iso-lefttab>") #'(lambda() (interactive) (unbury-buffer)))
+;; (global-set-key (kbd "C-<tab>") #'(lambda() (interactive) (bury-buffer)))
+;; (global-set-key (kbd "C-S-<iso-lefttab>") #'(lambda() (interactive) (unbury-buffer)))
+(global-set-key (kbd "C-<tab>") 'next-buffer)
+(global-set-key (kbd "C-S-<iso-lefttab>") 'previous-buffer)
 
 ;; C-; comment out/in
 (defun one-line-comment ()
@@ -365,6 +374,15 @@
 (global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ doom-modeline                                                 ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode))
+;; to show icons correctly run ...
+;; M-x nerd-icons-install-fonts
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (unless (package-installed-p 'mozc)
@@ -381,6 +399,7 @@
     (toggle-input-method)))
 (global-set-key [henkan] 'ime-on)
 ;; 無変換キーでmozcオフ
+
 (defun ime-off ()
   (interactive)
   (when current-input-method
