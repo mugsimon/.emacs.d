@@ -52,12 +52,31 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (load-theme 'wombat t)
-
-(use-package timu-macos-theme
+(use-package doom-themes
   :ensure t
   :config
-  (load-theme 'timu-macos t))
+  ;; Enable the theme you like
+  (load-theme 'doom-one t)
+  ;; (load-theme 'doom-dracula t)
+  ;; (load-theme 'doom-snazzy t)
+  ;; (load-theme 'doom-palenight t)
+  ;; (load-theme 'doom-molokai t)
+  ;; (load-theme 'doom-horizon t)
+  ;; (load-theme 'doom-tokyo-night t)
+  ;; Optional settings
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom treemacs theme (all-the-icons must be installed!)
+  (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme 
+  ;; (setq doom-themes-treemacs-theme "doom-atom")
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+;; (use-package zenburn-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'zenburn t))
 
 ;; (use-package timu-rouge-theme
 ;;   :ensure t
@@ -69,12 +88,12 @@
 ;;   :config
 ;;   (load-theme 'spacemacs-dark t))
 
-;; (use-package sublime-themes
+;; treemacs theme
+;; (use-package treemacs-all-the-icons
+;;   :after treemacs
 ;;   :ensure t
 ;;   :config
-;;   (load-theme 'spolsky t)
-;;   ;; (load-theme 'junio t)
-;;   )
+;;   (treemacs-load-theme "all-the-icons"))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
@@ -137,6 +156,51 @@
 (setq redisplay-dont-pause t)
 ;; horizontal scroll margin
 (setq hscroll-margin 1)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ minibuffers                                                   ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode))
+
+(use-package marginalia
+  :ensure t
+  :init
+  (marginalia-mode))
+
+(use-package all-the-icons-completion
+  :ensure t
+  :after (marginalia)
+  :init
+  (all-the-icons-completion-mode))
+
+;; Show the depth of minibuffer recursion when using nested commands.
+;; (minibuffer-depth-indicate-mode 1)
+
+;; Enable a persistent minibuffer history 
+(savehist-mode 1)
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+
+;; To make the minibuffer appear centered
+;; (setq resize-mini-windows 'grow-only)
+;; (setq max-mini-window-height 0.3)
+
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ consult                                                       ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; Improve evaluation and command completion
+(use-package consult
+  :ensure t
+  :bind
+  (
+   ;; ("C-s" . consult-line)
+   ("M-s l" . consult-line)
+   ("M-y" . consult-yank-pop)
+   )
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ company mode                                                  ;;;
@@ -251,11 +315,6 @@
               ("C-x t t" . treemacs))
   )
 
-(use-package treemacs-all-the-icons
-  :after treemacs
-  :ensure t
-  :config
-  (treemacs-load-theme "all-the-icons"))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
