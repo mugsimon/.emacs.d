@@ -52,26 +52,34 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(use-package doom-themes
+;; (use-package doom-themes
+;;   :ensure t
+;;   :config
+;;   ;; Enable the theme you like
+;;   ;; (load-theme 'doom-one t)
+;;   (load-theme 'doom-two t)
+;;   ;; (load-theme 'doom-dracula t)
+;;   ;; (load-theme 'doom-snazzy t)
+;;   ;; (load-theme 'doom-palenight t)
+;;   ;; (load-theme 'doom-molokai t)
+;;   ;; (load-theme 'doom-horizon t)
+;;   ;; (load-theme 'doom-tokyo-night t)
+;;   ;; (load-theme 'doom-xcode t)
+;;   ;; (load-theme 'doom-vibrant t)
+;;   ;; Optional settings
+;;   ;; Enable flashing mode-line on errors
+;;   (doom-themes-visual-bell-config)
+;;   ;; Enable custom treemacs theme (all-the-icons must be installed!)
+;;   (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme 
+;;   ;; (setq doom-themes-treemacs-theme "doom-atom")
+;;   (doom-themes-treemacs-config)
+;;   ;; Corrects (and improves) org-mode's native fontification.
+;;   (doom-themes-org-config))
+
+(use-package timu-macos-theme
   :ensure t
   :config
-  ;; Enable the theme you like
-  (load-theme 'doom-one t)
-  ;; (load-theme 'doom-dracula t)
-  ;; (load-theme 'doom-snazzy t)
-  ;; (load-theme 'doom-palenight t)
-  ;; (load-theme 'doom-molokai t)
-  ;; (load-theme 'doom-horizon t)
-  ;; (load-theme 'doom-tokyo-night t)
-  ;; Optional settings
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; Enable custom treemacs theme (all-the-icons must be installed!)
-  (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme 
-  ;; (setq doom-themes-treemacs-theme "doom-atom")
-  (doom-themes-treemacs-config)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+  (load-theme 'timu-macos t))
 
 ;; (use-package zenburn-theme
 ;;   :ensure t
@@ -89,11 +97,11 @@
 ;;   (load-theme 'spacemacs-dark t))
 
 ;; treemacs theme
-;; (use-package treemacs-all-the-icons
-;;   :after treemacs
-;;   :ensure t
-;;   :config
-;;   (treemacs-load-theme "all-the-icons"))
+(use-package treemacs-all-the-icons
+  :after treemacs
+  :ensure t
+  :config
+  (treemacs-load-theme "all-the-icons"))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
