@@ -168,10 +168,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(use-package vertico
-  :ensure t
-  :init
-  (vertico-mode))
+(fido-vertical-mode t)
 
 (use-package marginalia
   :ensure t
