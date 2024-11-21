@@ -27,6 +27,27 @@
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ fonts setting                                                 ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package nerd-icons
+  :ensure t)
+
+(use-package all-the-icons
+  :ensure t)
+
+(defvar all-the-icons-setup-done
+  (expand-file-name "~/.emacs.d/.fonts-setup-done"))
+
+(unless (file-exists-p all-the-icons-setup-done)
+  ;; Run nerd-icons and all-the-icons setup
+  (nerd-icons-install-fonts t)
+  (all-the-icons-install-fonts t)
+  ;; Update font cache
+  (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
+  ;; Create the flag file
+  (write-region "" nil all-the-icons-setup-done))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq inhibit-startup-message t)
@@ -96,13 +117,6 @@
 ;;   :config
 ;;   (load-theme 'spacemacs-dark t))
 
-;; treemacs theme
-(use-package treemacs-all-the-icons
-  :after treemacs
-  :ensure t
-  :config
-  (treemacs-load-theme "all-the-icons"))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -111,8 +125,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(if (version<= "26.0.50" emacs-version)
-    (global-display-line-numbers-mode))
+(global-display-line-numbers-mode)
 (setq display-line-numbers-width-start t)
 (setq display-line-numbers-width 4)
 
@@ -192,6 +205,11 @@
 ;; (setq resize-mini-windows 'grow-only)
 ;; (setq max-mini-window-height 0.3)
 
+;; (use-package embark
+;;   :ensure t
+;;   :bind
+;;   (("C-." . embark-act) ;; Actions for the selected candidate
+;;    ("C-;" . embark-dwim))) ;; Do what I mean
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ consult                                                       ;;;
@@ -310,6 +328,19 @@
 			 (require 'lsp-scheme)
 			 (lsp-scheme))))
 
+
+;; Eglot
+;; (use-package eglot
+;;   :custom
+;;   (add-to-list 'eglot-server-programs
+;;                '((python-mode . ("pyright-langserver" "--stdio"))
+;;                  (c++-mode . ("clangd"))))
+;;   (setq eglot-python-path "~/miniconda3/bin/python")
+;;   :hook
+;;   ((python-mode . eglot-ensure)
+;;    (c-mode . eglot-ensure)
+;;    (c++-mode .eglot-ensure)))
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ treemacs                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -320,6 +351,12 @@
               ("C-x t t" . treemacs))
   )
 
+;; treemacs theme
+(use-package treemacs-all-the-icons
+  :after treemacs
+  :ensure t
+  :config
+  (treemacs-load-theme "all-the-icons"))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -463,8 +500,6 @@
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode))
-;; to show icons correctly run ...
-;; M-x nerd-icons-install-fonts
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
