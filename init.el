@@ -73,6 +73,9 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'mugsimon-macos-theme)
+
 ;; (use-package doom-themes
 ;;   :ensure t
 ;;   :config
@@ -97,10 +100,10 @@
 ;;   ;; Corrects (and improves) org-mode's native fontification.
 ;;   (doom-themes-org-config))
 
-(use-package timu-macos-theme
-  :ensure t
-  :config
-  (load-theme 'timu-macos t))
+;; (use-package timu-macos-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'timu-macos t))
 
 ;; (use-package zenburn-theme
 ;;   :ensure t
