@@ -73,8 +73,9 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'mugsimon-macos-theme)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+;; (load-file "~/.emacs.d/themes/mugsimon-theme/mugsimon-macos-theme.el")
+(load-theme 'mugsimon-macos)
 
 ;; (use-package doom-themes
 ;;   :ensure t
@@ -213,6 +214,15 @@
 ;;   :bind
 ;;   (("C-." . embark-act) ;; Actions for the selected candidate
 ;;    ("C-;" . embark-dwim))) ;; Do what I mean
+
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ rainbow-mode                                                  ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package rainbow-mode
+  :ensure t
+  :init
+  (rainbow-mode nil))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ consult                                                       ;;;
