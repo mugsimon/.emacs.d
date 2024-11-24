@@ -73,10 +73,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-;; (load-file "~/.emacs.d/themes/mugsimon-theme/mugsimon-macos-theme.el")
-(load-theme 'mugsimon-macos)
-
 ;; (use-package doom-themes
 ;;   :ensure t
 ;;   :config
@@ -101,10 +97,10 @@
 ;;   ;; Corrects (and improves) org-mode's native fontification.
 ;;   (doom-themes-org-config))
 
-;; (use-package timu-macos-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'timu-macos t))
+(use-package timu-macos-theme
+  :ensure t
+  :config
+  (load-theme 'timu-macos t))
 
 ;; (use-package zenburn-theme
 ;;   :ensure t
@@ -222,7 +218,18 @@
 (use-package rainbow-mode
   :ensure t
   :init
-  (rainbow-mode nil))
+  (rainbow-mode nil)
+  (defun rainbow-mode-limited ()
+    "Customize rainbow-mode to only highlight hex color codes."
+    (interactive)
+    (setq rainbow-html-colors nil) ;; HTMLの色名を無効化
+    (setq rainbow-x-colors nil)    ;; CSS色名を無効化
+    (setq rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
+    (when (bound-and-true-p rainbow-mode)
+      (rainbow-mode -1)
+      (rainbow-mode 1))
+    )
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ consult                                                       ;;;
@@ -276,83 +283,124 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; lsp-mode
-(use-package lsp-mode
-  :ensure t
-  :init
-  (setq read-process-output-max (* 1024 1024))
-  :custom
-  ;; clangd
-  ;; sudo apt install clangd
-  (lsp-clients-clangd-executable "clangd")
-  :config
-  ;; navigation
-  (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
-  (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
-  :hook (;; Enable lsp-mode for C, C++
-         ((c-mode c++-mode) . lsp)
-         ((racket-mode) . lsp)
-         )
-  :commands lsp)
+;; ;; lsp-mode
+;; (use-package lsp-mode
+;;   :ensure t
+;;   :init
+;;   (setq read-process-output-max (* 1024 1024))
+;;   :custom
+;;   ;; clangd
+;;   ;; sudo apt install clangd
+;;   (lsp-clients-clangd-executable "clangd")
+;;   :config
+;;   ;; navigation
+;;   (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
+;;   (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
+;;   :hook (;; Enable lsp-mode for C, C++
+;;          ((c-mode c++-mode) . lsp)
+;;          ((racket-mode) . lsp)
+;;          )
+;;   :commands lsp)
 
-;; lsp-ui
-(use-package lsp-ui
-  :ensure t
-  :custom
-  ;; lsp-ui-side-line
-  ;; (lsp-ui-sideline-show-hover t)
-  (lsp-ui-sideline-ignore-duplicate t)
-  ;; lsp-ui-peek
-  (lsp-ui-peek-enable t)
-  :config
-  ;; M-. show definitions
-  (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
-  ;; M-? show referances
-  (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-  :commands lsp-ui-mode)
+;; ;; lsp-ui
+;; (use-package lsp-ui
+;;   :ensure t
+;;   :custom
+;;   ;; lsp-ui-side-line
+;;   ;; (lsp-ui-sideline-show-hover t)
+;;   (lsp-ui-sideline-ignore-duplicate t)
+;;   ;; lsp-ui-peek
+;;   (lsp-ui-peek-enable t)
+;;   :config
+;;   ;; M-. show definitions
+;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+;;   ;; M-? show referances
+;;   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
+;;   :commands lsp-ui-mode)
 
 ;; Enable lsp-mode for Python
+;; Use conda environment
+;; mkdir -p ~/miniconda3
+;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+;; rm ~/miniconda3/miniconda.sh
+;; conda activate
+;; conda install pyright
 ;; sudo apt install -y nodejs npm
 ;; sudo npm install -g pyright
-(use-package lsp-pyright
-  :ensure t
-  :custom
-  (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-  ;; Use conda environment
-  ;; mkdir -p ~/miniconda3
-  ;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-  ;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-  ;; rm ~/miniconda3/miniconda.sh
-  (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         ;; avoid python-flymake diagnostics, can't detect import
-                         (setq flymake-diagnostic-functions nil)
-                         (lsp))))  ; or lsp-deferred
+;; (use-package lsp-pyright
+;;   :ensure t
+;;   :custom
+;;   (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+;;   (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
+;;   :hook ((python-mode python-ts-mode) . (lambda ()
+;;                                           (require 'lsp-pyright)
+;;                                           ;; avoid python-flymake diagnostics, can't detect import
+;;                                           (setq flymake-diagnostic-functions nil)
+;;                                           (lsp))))  ; or lsp-deferred
 
-;; Enable lsp-mode for scheme
-;; https://github.com/emacsmirror/lsp-scheme
-;; sudo apt install guile-3.0 guile-3.0-dev
-(use-package lsp-scheme
-  :ensure t
-  :custom
-  (lsp-scheme-implementation "guile")
-  :hook (scheme-mode . (lambda ()
-			 (require 'lsp-scheme)
-			 (lsp-scheme))))
+;; ;; Enable lsp-mode for scheme
+;; ;; https://github.com/emacsmirror/lsp-scheme
+;; ;; sudo apt install guile-3.0 guile-3.0-dev
+;; (use-package lsp-scheme
+;;   :ensure t
+;;   :custom
+;;   (lsp-scheme-implementation "guile")
+;;   :hook (scheme-mode . (lambda ()
+;; 			 (require 'lsp-scheme)
+;; 			 (lsp-scheme))))
 
 
 ;; Eglot
-;; (use-package eglot
-;;   :custom
-;;   (add-to-list 'eglot-server-programs
-;;                '((python-mode . ("pyright-langserver" "--stdio"))
-;;                  (c++-mode . ("clangd"))))
-;;   (setq eglot-python-path "~/miniconda3/bin/python")
-;;   :hook
-;;   ((python-mode . eglot-ensure)
-;;    (c-mode . eglot-ensure)
-;;    (c++-mode .eglot-ensure)))
+(use-package eglot
+  :after treesit
+  :config
+  (add-to-list 'eglot-server-programs
+               ;; mkdir -p ~/miniconda3
+               ;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+               ;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+               ;; rm ~/miniconda3/miniconda.sh
+               ;; conda activate
+               ;; conda install pyright
+               '((python-mode python-ts-mode) . ("~/miniconda3/bin/pyright-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               ;; sudo apt install clangd
+               '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("/usr/bin/clangd")))
+  (add-to-list 'eglot-server-programs
+               ;; sudo apt install guile-3.0 guile-3.0-dev
+               '(scheme-mode . ("/usr/bin/guile")))
+  :hook
+  (
+   ((python-mode python-ts-mode) . eglot-ensure)
+   ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
+   (scheme-mode . eglot-ensure)
+   )
+  )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tree-sitter                                                   ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; M-x treesit-install-language-grammar
+(use-package treesit
+  :init
+  (let ((tree-sitter-dir
+         (expand-file-name "tree-sitter/"
+                           user-emacs-directory)))
+    (dolist (lang '(c cpp python))
+      (let ((lib-file (format "%slibtree-sitter-%s.so" tree-sitter-dir lang)))
+        (unless (file-exists-p lib-file)
+          (treesit-install-language-grammar lang)
+          ))))
+  :config
+  (setq treesit-font-lock-level 4)
+  (setq major-mode-remap-alist
+        '(
+          (python-mode . python-ts-mode)          
+          (c-mode . c-ts-mode)
+          (c++-mode . c++-ts-mode)
+          )
+        )
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ treemacs                                                      ;;;
@@ -379,28 +427,6 @@
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ tree-sitter                                                   ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; https://emacs-tree-sitter.github.io/
-(unless (package-installed-p 'tree-sitter)
-  (package-refresh-contents)
-  (package-install 'tree-sitter))
-(require 'tree-sitter)
-
-(unless (package-installed-p 'tree-sitter-langs)
-  (package-refresh-contents)
-  (package-install 'tree-sitter-langs))
-(require 'tree-sitter-langs)
-;; use tree-sitter all mode
-(global-tree-sitter-mode)
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
-;; Some syntax highlights are incorrect without this setting(Cpp, js)
-(setq tree-sitter-hl-use-font-lock-keywords nil)
-
-;; Define custom grammar mapping for Scheme files with racket
-(add-to-list 'tree-sitter-major-mode-language-alist '(scheme-mode . racket))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab mode                                                      ;;;
@@ -512,7 +538,8 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package doom-modeline
   :ensure t
-  :hook (after-init . doom-modeline-mode))
+  :hook (after-init . doom-modeline-mode)
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
