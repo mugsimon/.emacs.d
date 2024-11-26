@@ -60,6 +60,11 @@
 ;; show column num
 (column-number-mode t)
 
+(use-package doom-modeline
+  :ensure t
+  :hook (after-init . doom-modeline-mode)
+  )
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - isearch                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -73,49 +78,10 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (use-package doom-themes
-;;   :ensure t
-;;   :config
-;;   ;; Enable the theme you like
-;;   ;; (load-theme 'doom-one t)
-;;   (load-theme 'doom-two t)
-;;   ;; (load-theme 'doom-dracula t)
-;;   ;; (load-theme 'doom-snazzy t)
-;;   ;; (load-theme 'doom-palenight t)
-;;   ;; (load-theme 'doom-molokai t)
-;;   ;; (load-theme 'doom-horizon t)
-;;   ;; (load-theme 'doom-tokyo-night t)
-;;   ;; (load-theme 'doom-xcode t)
-;;   ;; (load-theme 'doom-vibrant t)
-;;   ;; Optional settings
-;;   ;; Enable flashing mode-line on errors
-;;   (doom-themes-visual-bell-config)
-;;   ;; Enable custom treemacs theme (all-the-icons must be installed!)
-;;   (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme 
-;;   ;; (setq doom-themes-treemacs-theme "doom-atom")
-;;   (doom-themes-treemacs-config)
-;;   ;; Corrects (and improves) org-mode's native fontification.
-;;   (doom-themes-org-config))
-
 (use-package timu-macos-theme
   :ensure t
   :config
   (load-theme 'timu-macos t))
-
-;; (use-package zenburn-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'zenburn t))
-
-;; (use-package timu-rouge-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'timu-rouge t))
-
-;; (use-package spacemacs-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'spacemacs-dark t))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
@@ -175,13 +141,28 @@
 (setq next-screen-context-lines 1)
 ;; keep redisplay
 (setq redisplay-dont-pause t)
+
+;; mouse scroll
+(setq mouse-wheel-scroll-amount '(1))
+(setq mouse-wheel-progressive-speed t)
+
 ;; horizontal scroll margin
 (setq hscroll-margin 1)
+(setq hscroll-step 1)
+
+;; horizontal mouse scroll
+(setq mouse-wheel-tilt-scroll t)
+(setq mouse-wheel-flip-direction t)
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (fido-vertical-mode t)
+
+;; Enable a persistent minibuffer history 
+(savehist-mode 1)
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
 
 (use-package marginalia
   :ensure t
@@ -197,10 +178,6 @@
 ;; Show the depth of minibuffer recursion when using nested commands.
 ;; (minibuffer-depth-indicate-mode 1)
 
-;; Enable a persistent minibuffer history 
-(savehist-mode 1)
-(setq savehist-additional-variables '(search-ring regexp-search-ring))
-
 ;; To make the minibuffer appear centered
 ;; (setq resize-mini-windows 'grow-only)
 ;; (setq max-mini-window-height 0.3)
@@ -211,6 +188,16 @@
 ;;   (("C-." . embark-act) ;; Actions for the selected candidate
 ;;    ("C-;" . embark-dwim))) ;; Do what I mean
 
+;; (use-package orderless
+;;   :ensure t
+;;   :custom
+;;   (completion-styles '(orderless basic))
+;;   (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ beep off                                                      ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq ring-bell-function 'ignore)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ rainbow-mode                                                  ;;;
@@ -248,37 +235,73 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ company mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; company
-(unless (package-installed-p 'company)
-  (package-refresh-contents)
-  (package-install 'company))
-(require 'company)
-;; enable company-mode globally
-(global-company-mode)
-;; set delay before completion suggestions appear
-(setq company-idle-delay 0.0)
-;; minimum prefix length before suggestions are shown
-(setq company-minimum-prefix-length 1)
-;; enable wrap-around selection in completion candidates
-(setq company-selection-wrap-around t)
-;; non exact match
-(setq company-require-match 'never)
-;; automatic expand
-(setq company-auto-expand t)
-;; show frequently used word, show prefix match word
-(setq company-transformers '(company-sort-by-occurrence
-                             company-sort-by-backend-importance
-                             company-sort-prefer-same-case-prefix))
-
-;; Use Enter/Return to complete the current selection
-(define-key company-active-map (kbd "RET") 'company-complete-selection)
-(define-key company-active-map (kbd "<return>") 'company-complete-selection)
-;; select condidates with tab key
-(with-eval-after-load 'company
-  (define-key company-active-map
-              (kbd "<tab>")
-              #'company-complete)
+(use-package company
+  :ensure t
+  :init
+  ;; Enable company-mode globally
+  (global-company-mode)
+  :custom
+  ;; Set delay before completion suggestions appear
+  (company-idle-delay 0.0)
+  ;; Minimum prefix length before suggestions are shown
+  (company-minimum-prefix-length 1)
+  ;; Enable wrap-around selection in completion candidates
+  (company-selection-wrap-around t)
+  ;; Non-exact match
+  (company-auto-expand t)
+  ;; Set backends
+  (company-backends '((company-capf)))
+  ;; Sort candidates
+  (company-transformers '(company-sort-by-occurrence
+                          company-sort-by-backend-importance
+                          company-sort-prefer-same-case-prefix))
+  :bind
+  ;; Use Enter/Return to complete the current selection
+  (:map company-active-map
+        ("RET" . company-complete-selection)
+        ("<return>" . company-complete-selection)
+        ("<tab>" . company-complete)
+        )
   )
+
+(use-package company-statistics
+  :ensure t
+  :config
+  (company-statistics-mode))
+
+;; ;; company
+;; (unless (package-installed-p 'company)
+;;   (package-refresh-contents)
+;;   (package-install 'company))
+;; (require 'company)
+;; ;; enable company-mode globally
+;; (global-company-mode)
+;; ;; set delay before completion suggestions appear
+;; (setq company-idle-delay 0.0)
+;; ;; minimum prefix length before suggestions are shown
+;; (setq company-minimum-prefix-length 1)
+;; ;; enable wrap-around selection in completion candidates
+;; (setq company-selection-wrap-around t)
+;; ;; non exact match
+;; (setq company-require-match 'never)
+;; ;; automatic expand
+;; (setq company-auto-expand t)
+
+;; (setq company-backends '((company-capf)))
+;; ;; show frequently used word, show prefix match word
+;; (setq company-transformers '(company-sort-by-occurrence
+;;                              company-sort-by-backend-importance
+;;                              company-sort-prefer-same-case-prefix))
+
+;; ;; Use Enter/Return to complete the current selection
+;; (define-key company-active-map (kbd "RET") 'company-complete-selection)
+;; (define-key company-active-map (kbd "<return>") 'company-complete-selection)
+;; ;; select condidates with tab key
+;; (with-eval-after-load 'company
+;;   (define-key company-active-map
+;;               (kbd "<tab>")
+;;               #'company-complete)
+;;   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
@@ -313,7 +336,7 @@
 ;;   (lsp-ui-peek-enable t)
 ;;   :config
 ;;   ;; M-. show definitions
-;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions)
+;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions  )
 ;;   ;; M-? show referances
 ;;   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
 ;;   :commands lsp-ui-mode)
@@ -362,13 +385,16 @@
                ;; rm ~/miniconda3/miniconda.sh
                ;; conda activate
                ;; conda install pyright
-               '((python-mode python-ts-mode) . ("~/miniconda3/bin/pyright-langserver" "--stdio")))
+               '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
-               '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("/usr/bin/clangd")))
+               '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install guile-3.0 guile-3.0-dev
-               '(scheme-mode . ("/usr/bin/guile")))
+               '(scheme-mode . ("/usr/bin/guile"))
+               ;; raco pkg install racket-langserver
+               ;; '(scheme-mode . ("racket" "-l racket-langserver"))
+               )
   :hook
   (
    ((python-mode python-ts-mode) . eglot-ensure)
@@ -403,6 +429,18 @@
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ tramp                                                         ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package tramp
+  :custom
+  (tramp-default-method "ssh")
+  (tramp-verbose 1)
+  (tramp-auto-save-directory "/tmp")
+  :config
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ treemacs                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package treemacs
@@ -432,6 +470,12 @@
 ;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (global-tab-line-mode t)
+;; (tab-bar-mode nil)
+;; (global-set-key (kbd "C-<tab>") 'tab-bar-switch-to-next-tab)
+;; (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-bar-switch-to-prev-tab)
+(global-set-key (kbd "C-<tab>") 'tab-line-switch-to-next-tab)
+(global-set-key (kbd "C-S-<iso-lefttab>") 'tab-line-switch-to-prev-tab)
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
@@ -442,6 +486,11 @@
 ;;; @ auto paring                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (electric-pair-mode t)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ truncate-lines                                                ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(add-hook 'prog-mode-hook (lambda () (setq truncate-lines t)))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
@@ -464,8 +513,8 @@
 ;; C-TAB, C-Shift-TAB buffer switch
 ;; (global-set-key (kbd "C-<tab>") #'(lambda() (interactive) (bury-buffer)))
 ;; (global-set-key (kbd "C-S-<iso-lefttab>") #'(lambda() (interactive) (unbury-buffer)))
-(global-set-key (kbd "C-<tab>") 'next-buffer)
-(global-set-key (kbd "C-S-<iso-lefttab>") 'previous-buffer)
+;; (global-set-key (kbd "C-<tab>") 'next-buffer)
+;; (global-set-key (kbd "C-S-<iso-lefttab>") 'previous-buffer)
 
 ;; C-; comment out/in
 (defun one-line-comment ()
@@ -493,6 +542,7 @@
 (global-set-key (kbd "<mouse-8>") 'xref-go-back)
 ;; M-C-,
 (global-set-key (kbd "<mouse-9>") 'xref-go-forward)
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
@@ -532,14 +582,6 @@
 (global-set-key (kbd "C-S-c C-S-c") 'mc/mark-all-dwim)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ doom-modeline                                                 ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode)
-  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
