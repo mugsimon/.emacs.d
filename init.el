@@ -93,7 +93,8 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (global-display-line-numbers-mode)
 (setq display-line-numbers-width-start t)
-(setq display-line-numbers-width 4)
+(setq display-line-numbers-width 3)
+
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
@@ -154,7 +155,6 @@
 (setq mouse-wheel-tilt-scroll t)
 (setq mouse-wheel-flip-direction t)
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -176,7 +176,7 @@
   (all-the-icons-completion-mode))
 
 ;; Show the depth of minibuffer recursion when using nested commands.
-;; (minibuffer-depth-indicate-mode 1)
+(minibuffer-depth-indicate-mode 1)
 
 ;; To make the minibuffer appear centered
 ;; (setq resize-mini-windows 'grow-only)
@@ -248,6 +248,8 @@
   ;; Enable wrap-around selection in completion candidates
   (company-selection-wrap-around t)
   ;; Non-exact match
+  (company-require-match 'never)
+  ;; Automatic expand
   (company-auto-expand t)
   ;; Set backends
   (company-backends '((company-capf)))
@@ -268,40 +270,6 @@
   :ensure t
   :config
   (company-statistics-mode))
-
-;; ;; company
-;; (unless (package-installed-p 'company)
-;;   (package-refresh-contents)
-;;   (package-install 'company))
-;; (require 'company)
-;; ;; enable company-mode globally
-;; (global-company-mode)
-;; ;; set delay before completion suggestions appear
-;; (setq company-idle-delay 0.0)
-;; ;; minimum prefix length before suggestions are shown
-;; (setq company-minimum-prefix-length 1)
-;; ;; enable wrap-around selection in completion candidates
-;; (setq company-selection-wrap-around t)
-;; ;; non exact match
-;; (setq company-require-match 'never)
-;; ;; automatic expand
-;; (setq company-auto-expand t)
-
-;; (setq company-backends '((company-capf)))
-;; ;; show frequently used word, show prefix match word
-;; (setq company-transformers '(company-sort-by-occurrence
-;;                              company-sort-by-backend-importance
-;;                              company-sort-prefer-same-case-prefix))
-
-;; ;; Use Enter/Return to complete the current selection
-;; (define-key company-active-map (kbd "RET") 'company-complete-selection)
-;; (define-key company-active-map (kbd "<return>") 'company-complete-selection)
-;; ;; select condidates with tab key
-;; (with-eval-after-load 'company
-;;   (define-key company-active-map
-;;               (kbd "<tab>")
-;;               #'company-complete)
-;;   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ lsp mode                                                      ;;;
@@ -379,22 +347,25 @@
   :after treesit
   :config
   (add-to-list 'eglot-server-programs
-               ;; mkdir -p ~/miniconda3
-               ;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-               ;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-               ;; rm ~/miniconda3/miniconda.sh
-               ;; conda activate
-               ;; conda install pyright
-               '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
+               ;; curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+               ;; bash Miniforge3-$(uname)-$(uname -m).sh
+               ;; mamba install -c conda-forge python-lsp-server
+               '((python-mode python-ts-mode) . ("pylsp")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
   (add-to-list 'eglot-server-programs
-               ;; sudo apt install guile-3.0 guile-3.0-dev
-               '(scheme-mode . ("/usr/bin/guile"))
+               ;; git clone https://codeberg.org/rgherdt/scheme-lsp-server.git
+               ;; cd scheme-lsp-server
+               ;; sudo apt install guix
+               ;; guix package -f guix.scm
+               ;; GUIX_PROFILE="/home/simon/.guix-profile" # write this line to .bashrc
+               ;; source "$GUIX_PROFILE/etc/profile" # write this line to .bashrc
+               '(scheme-mode . ("guile-lsp-server")))
+  (add-to-list 'eglot-server-programs
+               ;; sudo snap install racket
                ;; raco pkg install racket-langserver
-               ;; '(scheme-mode . ("racket" "-l racket-langserver"))
-               )
+               '(racket-mode . ("racket" "-l" "racket-langserver"))
   :hook
   (
    ((python-mode python-ts-mode) . eglot-ensure)
@@ -436,9 +407,20 @@
   (tramp-default-method "ssh")
   (tramp-verbose 1)
   (tramp-auto-save-directory "/tmp")
+  (tramp-connection-timeout 30)
   :config
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  :hook (tramp-cleanup-hook . (lambda ()
+                                (message
+                                 "Tramp connection lost, trying to reconnect..."))
+                            )
   )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ projectile                                                    ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package projectile
+  :ensure t)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ treemacs                                                      ;;;
@@ -447,7 +429,9 @@
   :ensure t
   :defer t
   :bind (:map global-map
-              ("C-x t t" . treemacs))
+              ("C-x t t" . treemacs)
+              ("C-x t a" . treemacs-add-and-display-current-project-exclusively)
+              )
   )
 
 ;; treemacs theme
@@ -475,7 +459,6 @@
 ;; (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-bar-switch-to-prev-tab)
 (global-set-key (kbd "C-<tab>") 'tab-line-switch-to-next-tab)
 (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-line-switch-to-prev-tab)
-
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
@@ -543,7 +526,6 @@
 ;; M-C-,
 (global-set-key (kbd "<mouse-9>") 'xref-go-forward)
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -570,6 +552,12 @@
 ;; racket
 (use-package racket-mode
   :ensure t
+  )
+
+;; yaml
+(use-package yaml-mode
+  :ensure t
+  :mode ("\\.yml\\'" "\\.yaml\\'")
   )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
