@@ -1,5 +1,5 @@
-;;; mugsimon
 ;;; emacs setting file
+;;; mugsimon
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ package manager                                               ;;;
@@ -81,7 +81,12 @@
 (use-package timu-macos-theme
   :ensure t
   :config
-  (load-theme 'timu-macos t))
+  (load-theme 'timu-macos t)
+  ;; (custom-set-faces
+   ;; '(highlight-symbol-face
+     ;; ((,t ()))))
+     ;; ((,class (:background "#616161" :distant-foreground nil :inherit (foreground-color))))))
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
@@ -91,10 +96,10 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(global-display-line-numbers-mode)
+;; (global-display-line-numbers-mode)
+(display-line-numbers-mode)
 (setq display-line-numbers-width-start t)
 (setq display-line-numbers-width 3)
-
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
@@ -216,6 +221,20 @@
       (rainbow-mode -1)
       (rainbow-mode 1))
     )
+  )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ highlight symbol                                              ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package highlight-symbol
+  :ensure t
+  :custom
+  (highlight-symbol-idle-delay 0.3)
+  :bind
+  (("M-n" . highlight-symbol-nxext)
+   ("M-p" . highlight-symbol-prev))
+  :hook
+  (prog-mode . highlight-symbol-mode)
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -365,7 +384,10 @@
   (add-to-list 'eglot-server-programs
                ;; sudo snap install racket
                ;; raco pkg install racket-langserver
-               '(racket-mode . ("racket" "-l" "racket-langserver"))
+               '(racket-mode . ("racket" "-l" "racket-langserver")))
+  :custom
+  (eglot-ignored-server-capabilities
+   '(:documentHighlightProvider))
   :hook
   (
    ((python-mode python-ts-mode) . eglot-ensure)
@@ -432,6 +454,7 @@
               ("C-x t t" . treemacs)
               ("C-x t a" . treemacs-add-and-display-current-project-exclusively)
               )
+  :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
   )
 
 ;; treemacs theme
@@ -459,7 +482,7 @@
 ;; (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-bar-switch-to-prev-tab)
 (global-set-key (kbd "C-<tab>") 'tab-line-switch-to-next-tab)
 (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-line-switch-to-prev-tab)
-
+(global-set-key (kbd "C-x t k") 'tab-line-close-tab)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -613,3 +636,10 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror 'nomessage)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ custom theme                                                  ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(custom-set-faces
+   '(highlight-symbol-face
+     ((t (:background "#616161" :weight bold)))))
