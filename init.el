@@ -252,46 +252,65 @@
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ company mode                                                  ;;;
+;;; @ Auto Completion                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(use-package company
+;; (use-package company
+;;   :ensure t
+;;   :init
+;;   ;; Enable company-mode globally
+;;   (global-company-mode)
+;;   :custom
+;;   ;; Set delay before completion suggestions appear
+;;   (company-idle-delay 0.0)
+;;   ;; Minimum prefix length before suggestions are shown
+;;   (company-minimum-prefix-length 1)
+;;   ;; Enable wrap-around selection in completion candidates
+;;   (company-selection-wrap-around t)
+;;   ;; Non-exact match
+;;   (company-require-match 'never)
+;;   ;; Automatic expand
+;;   (company-auto-expand t)
+;;   ;; Set backends
+;;   (company-backends '((company-capf)))
+;;   ;; Sort candidates
+;;   (company-transformers '(company-sort-by-occurrence
+;;                           company-sort-by-backend-importance
+;;                           company-sort-prefer-same-case-prefix))
+;;   :bind
+;;   ;; Use Enter/Return to complete the current selection
+;;   (:map company-active-map
+;;         ("RET" . company-complete-selection)
+;;         ("<return>" . company-complete-selection)
+;;         ("<tab>" . company-complete)
+;;         )
+;;   )
+
+;; (use-package company-statistics
+;;   :ensure t
+;;   :config
+;;   (company-statistics-mode))
+
+(use-package corfu
   :ensure t
   :init
-  ;; Enable company-mode globally
-  (global-company-mode)
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
   :custom
-  ;; Set delay before completion suggestions appear
-  (company-idle-delay 0.0)
-  ;; Minimum prefix length before suggestions are shown
-  (company-minimum-prefix-length 1)
-  ;; Enable wrap-around selection in completion candidates
-  (company-selection-wrap-around t)
-  ;; Non-exact match
-  (company-require-match 'never)
-  ;; Automatic expand
-  (company-auto-expand t)
-  ;; Set backends
-  (company-backends '((company-capf)))
-  ;; Sort candidates
-  (company-transformers '(company-sort-by-occurrence
-                          company-sort-by-backend-importance
-                          company-sort-prefer-same-case-prefix))
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-delay 0.0)
+  (corfu-auto-prefix 1)
   :bind
-  ;; Use Enter/Return to complete the current selection
-  (:map company-active-map
-        ("RET" . company-complete-selection)
-        ("<return>" . company-complete-selection)
-        ("<tab>" . company-complete)
-        )
+  (:map corfu-map
+        ("RET" . corfu-complete)
+        ("<return>" . corfu-complete)
+        ("<tab>" . corfu-expand)
+        ("<backtab>" . corfu-reset))
   )
 
-(use-package company-statistics
-  :ensure t
-  :config
-  (company-statistics-mode))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ lsp mode                                                      ;;;
+;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; ;; lsp-mode
 ;; (use-package lsp-mode
@@ -387,12 +406,14 @@
                '(racket-mode . ("racket" "-l" "racket-langserver")))
   :custom
   (eglot-ignored-server-capabilities
+   ;; disable symbol highlight
    '(:documentHighlightProvider))
   :hook
   (
    ((python-mode python-ts-mode) . eglot-ensure)
    ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
    (scheme-mode . eglot-ensure)
+   (racket-mode . eglot-ensure)
    )
   )
 
@@ -642,4 +663,4 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (custom-set-faces
    '(highlight-symbol-face
-     ((t (:background "#616161" :weight bold)))))
+     ((t (:background "#515151" :weight bold)))))
