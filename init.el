@@ -241,15 +241,15 @@
 ;;; @ consult                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Improve evaluation and command completion
-(use-package consult
-  :ensure t
-  :bind
-  (
-   ;; ("C-s" . consult-line)
-   ("M-s l" . consult-line)
-   ("M-y" . consult-yank-pop)
-   )
-  )
+;; (use-package consult
+;;   :ensure t
+;;   :bind
+;;   (
+;;    ;; ("C-s" . consult-line)
+;;    ("M-s l" . consult-line)
+;;    ("M-y" . consult-yank-pop)
+;;    )
+;;   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Auto Completion                                               ;;;
@@ -306,7 +306,8 @@
         ("RET" . corfu-complete)
         ("<return>" . corfu-complete)
         ("<tab>" . corfu-expand)
-        ("<backtab>" . corfu-reset))
+        ("<backtab>" . corfu-reset)
+        )
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -406,7 +407,7 @@
                '(racket-mode . ("racket" "-l" "racket-langserver")))
   :custom
   (eglot-ignored-server-capabilities
-   ;; disable symbol highlight
+   ;; disable eglot symbol highlight
    '(:documentHighlightProvider))
   :hook
   (
@@ -661,6 +662,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom theme                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(custom-set-faces
-   '(highlight-symbol-face
-     ((t (:background "#515151" :weight bold)))))
+(setq custom-theme-file "~/.emacs.d/themes/custom-theme.el")
+(load custom-theme-file 'noerror 'nomessage)
+
