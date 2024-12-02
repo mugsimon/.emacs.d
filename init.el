@@ -99,7 +99,7 @@
 ;; (global-display-line-numbers-mode)
 (display-line-numbers-mode)
 (setq display-line-numbers-width-start t)
-(setq display-line-numbers-width 3)
+(setq display-line-numbers-width 4)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
@@ -140,7 +140,7 @@
 ;;; @ scroll                                                        ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; keep kersol when scrolling
-(setq scroll-preserve-screen-position t)
+(setq scroll-preserve-screen-position nil)
 ;; small scroll
 (setq scroll-conservatively 10000)
 ;; line overlay when scrolling
