@@ -36,11 +36,15 @@
         (lightblue (if timu-macos-muted-colors "#7abeff" "#7abeff"))
         )
 
-    ;; font-lock
+    
     (custom-set-faces
+     ;; default
+     `(default ((,class (:background unspecified))))
+     ;; font-lock
      `(font-lock-builtin-face ((,class (:foreground ,orange))))
      `(font-lock-type-face ((,class (:foreground ,orange))))
-     `(font-lock-misc-punctuation-face ((,class (:foreground nil))))
+     `(font-lock-misc-punctuation-face ((,class (:foreground unspecified))))
+     ;; highlight-symbol
      `(highlight-symbol-face
        ((,class (:background ,macos1 :weight bold))))
      )

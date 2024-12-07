@@ -1,6 +1,7 @@
 ;;; emacs setting file
 ;;; mugsimon
 
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ package manager                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -56,9 +57,9 @@
 ;;; @ screen - mode line                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; show line num
-(line-number-mode t)
+;; (line-number-mode t)
 ;; show column num
-(column-number-mode t)
+;; (column-number-mode t)
 
 (use-package doom-modeline
   :ensure t
@@ -82,10 +83,6 @@
   :ensure t
   :config
   (load-theme 'timu-macos t)
-  ;; (custom-set-faces
-   ;; '(highlight-symbol-face
-     ;; ((,t ()))))
-     ;; ((,class (:background "#616161" :distant-foreground nil :inherit (foreground-color))))))
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -97,7 +94,7 @@
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; (global-display-line-numbers-mode)
-(display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setq display-line-numbers-width-start t)
 (setq display-line-numbers-width 4)
 
@@ -135,6 +132,15 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; make no lockfile
 (setq create-lockfiles nil)
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ session                                                       ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; save desktop session
+(desktop-save-mode)
+
+;; cursor memory
+(save-place-mode)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ scroll                                                        ;;;
@@ -296,6 +302,10 @@
   (global-corfu-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
+  (defun ms-corfu-expand ()
+    (interactive)
+    (unless (corfu-expand)
+      (corfu-complete)))
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -305,7 +315,7 @@
   (:map corfu-map
         ("RET" . corfu-complete)
         ("<return>" . corfu-complete)
-        ("<tab>" . corfu-expand)
+        ("<tab>" . ms-corfu-expand)
         ("<backtab>" . corfu-reset)
         )
   )
@@ -389,7 +399,8 @@
                ;; curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
                ;; bash Miniforge3-$(uname)-$(uname -m).sh
                ;; mamba install -c conda-forge python-lsp-server
-               '((python-mode python-ts-mode) . ("pylsp")))
+               ;; '((python-mode python-ts-mode) . ("pylsp")))
+               '((python-mode python-ts-mode) . ("~/miniforge3/bin/pylsp")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
@@ -474,7 +485,8 @@
   :defer t
   :bind (:map global-map
               ("C-x t t" . treemacs)
-              ("C-x t a" . treemacs-add-and-display-current-project-exclusively)
+              ("C-x t a" . treemacs-add-and-display-current-project)
+              ("C-x t e" . treemacs-add-and-display-current-project-exclusively)
               )
   :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
   )
@@ -604,6 +616,25 @@
   :ensure t
   :mode ("\\.yml\\'" "\\.yaml\\'")
   )
+
+;; python
+(setq python-indent-offset 4)
+(use-package conda
+  :ensure t
+  :init
+  (setq conda-anaconda-home "~/miniforge3")
+  (setq conda-env-home-directory "~/miniforge3")
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  (conda-mode-line-setup)
+  :hook
+  ((conda-postactivate . (lambda ()
+                           (eglot-reconnect
+                            (eglot-current-server))))
+   (conda-postdeactivate . (lambda ()
+                           (eglot-reconnect
+                            (eglot-current-server)))))
+  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -664,4 +695,3 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-theme-file "~/.emacs.d/themes/custom-theme.el")
 (load custom-theme-file 'noerror 'nomessage)
-

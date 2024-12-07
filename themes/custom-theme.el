@@ -9,6 +9,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ common custom                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(custom-set-faces
-   '(highlight-symbol-face
-     ((t (:background "#414141" :weight bold)))))
+;; (custom-set-faces
+;;    '(highlight-symbol-face
+;;      ((t (:background "#414141" :weight bold)))))
