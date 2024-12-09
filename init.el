@@ -491,6 +491,10 @@
   :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
   )
 
+(use-package treemacs-projectile
+  :ensure t
+  :after (treemacs projectile))
+
 ;; treemacs theme
 (use-package treemacs-all-the-icons
   :after treemacs
