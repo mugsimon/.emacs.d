@@ -95,7 +95,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; (global-display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq display-line-numbers-width-start t)
+(setq display-line-numbers-width-start nil) ;; Disable dynamic width adjustment
 (setq display-line-numbers-width 4)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -400,7 +400,10 @@
                ;; bash Miniforge3-$(uname)-$(uname -m).sh
                ;; mamba install -c conda-forge python-lsp-server
                ;; '((python-mode python-ts-mode) . ("pylsp")))
-               '((python-mode python-ts-mode) . ("~/miniforge3/bin/pylsp")))
+               ;; '((python-mode python-ts-mode) . ("~/miniforge3/bin/pylsp")))
+               ;; # pyright
+               ;; mamba install -c conda-forge nodejs=18 pyright
+               '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
@@ -420,6 +423,8 @@
   (eglot-ignored-server-capabilities
    ;; disable eglot symbol highlight
    '(:documentHighlightProvider))
+  :config
+  (setq read-process-output-max (* 1024 1024)) ;; 1MB
   :hook
   (
    ((python-mode python-ts-mode) . eglot-ensure)
