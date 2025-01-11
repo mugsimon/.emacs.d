@@ -95,8 +95,8 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; (global-display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq display-line-numbers-width-start nil) ;; Disable dynamic width adjustment
-(setq display-line-numbers-width 4)
+(setq display-line-numbers-width-start t) ;; Disable dynamic width adjustment
+(setq display-line-numbers-width 3)
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
