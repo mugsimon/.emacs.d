@@ -320,6 +320,11 @@
         )
   )
 
+(use-package prescient
+  :ensure t
+  :config
+  (prescient-persist-mode t))
+
 (use-package corfu-prescient
   :ensure t
   :after corfu
