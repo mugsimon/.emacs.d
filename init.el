@@ -1,7 +1,6 @@
 ;;; emacs setting file
 ;;; mugsimon
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ package manager                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -24,7 +23,6 @@
 ;; keyboard input
 (set-keyboard-coding-system 'utf-8-unix)
 ;; subprocess
-;; (setq default-process-coding-system '(undecided-dos . utf-8-unix))
 (setq default-process-coding-system '(utf-8-unix . utf-8-unix))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -56,11 +54,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - mode line                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; show line num
-;; (line-number-mode t)
-;; show column num
-;; (column-number-mode t)
-
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode)
@@ -93,7 +86,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (global-display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setq display-line-numbers-width-start t) ;; Disable dynamic width adjustment
 (setq display-line-numbers-width 3)
@@ -138,7 +130,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; save desktop session
 (desktop-save-mode)
-
 ;; cursor memory
 (save-place-mode)
 
@@ -189,21 +180,11 @@
 ;; Show the depth of minibuffer recursion when using nested commands.
 (minibuffer-depth-indicate-mode 1)
 
-;; To make the minibuffer appear centered
-;; (setq resize-mini-windows 'grow-only)
-;; (setq max-mini-window-height 0.3)
-
-;; (use-package embark
-;;   :ensure t
-;;   :bind
-;;   (("C-." . embark-act) ;; Actions for the selected candidate
-;;    ("C-;" . embark-dwim))) ;; Do what I mean
-
-;; (use-package orderless
-;;   :ensure t
-;;   :custom
-;;   (completion-styles '(orderless basic))
-;;   (completion-category-overrides '((file (styles basic partial-completion)))))
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ beep off                                                      ;;;
@@ -244,58 +225,35 @@
   )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ consult                                                       ;;;
+;;; @ consult embark                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Improve evaluation and command completion
-;; (use-package consult
-;;   :ensure t
-;;   :bind
-;;   (
-;;    ;; ("C-s" . consult-line)
-;;    ("M-s l" . consult-line)
-;;    ("M-y" . consult-yank-pop)
-;;    )
-;;   )
+(use-package consult
+  :ensure t
+  :bind
+  (
+   ("C-x b" . consult-buffer) ;; enhance swith-to-buffer
+   ("C-s" . consult-line) ;; enhance isearch-forward
+   ("M-g g". consult-goto-line) ;; enhance goto-line
+   ("M-y" . consult-yank-pop)
+   )
+  )
+
+(use-package embark
+  :ensure t
+  :bind
+  (("C-." . embark-act) ;; Actions for the selected candidate
+   ("C-;" . embark-dwim))) ;; Do what I mean
+
+(use-package embark-consult
+  :ensure t
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Auto Completion                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (use-package company
-;;   :ensure t
-;;   :init
-;;   ;; Enable company-mode globally
-;;   (global-company-mode)
-;;   :custom
-;;   ;; Set delay before completion suggestions appear
-;;   (company-idle-delay 0.0)
-;;   ;; Minimum prefix length before suggestions are shown
-;;   (company-minimum-prefix-length 1)
-;;   ;; Enable wrap-around selection in completion candidates
-;;   (company-selection-wrap-around t)
-;;   ;; Non-exact match
-;;   (company-require-match 'never)
-;;   ;; Automatic expand
-;;   (company-auto-expand t)
-;;   ;; Set backends
-;;   (company-backends '((company-capf)))
-;;   ;; Sort candidates
-;;   (company-transformers '(company-sort-by-occurrence
-;;                           company-sort-by-backend-importance
-;;                           company-sort-prefer-same-case-prefix))
-;;   :bind
-;;   ;; Use Enter/Return to complete the current selection
-;;   (:map company-active-map
-;;         ("RET" . company-complete-selection)
-;;         ("<return>" . company-complete-selection)
-;;         ("<tab>" . company-complete)
-;;         )
-;;   )
-
-;; (use-package company-statistics
-;;   :ensure t
-;;   :config
-;;   (company-statistics-mode))
-
 (use-package corfu
   :ensure t
   :init
@@ -330,89 +288,17 @@
   :after corfu
   :config
   (corfu-prescient-mode t))
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; ;; lsp-mode
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :init
-;;   (setq read-process-output-max (* 1024 1024))
-;;   :custom
-;;   ;; clangd
-;;   ;; sudo apt install clangd
-;;   (lsp-clients-clangd-executable "clangd")
-;;   :config
-;;   ;; navigation
-;;   (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
-;;   (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
-;;   :hook (;; Enable lsp-mode for C, C++
-;;          ((c-mode c++-mode) . lsp)
-;;          ((racket-mode) . lsp)
-;;          )
-;;   :commands lsp)
-
-;; ;; lsp-ui
-;; (use-package lsp-ui
-;;   :ensure t
-;;   :custom
-;;   ;; lsp-ui-side-line
-;;   ;; (lsp-ui-sideline-show-hover t)
-;;   (lsp-ui-sideline-ignore-duplicate t)
-;;   ;; lsp-ui-peek
-;;   (lsp-ui-peek-enable t)
-;;   :config
-;;   ;; M-. show definitions
-;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions  )
-;;   ;; M-? show referances
-;;   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-;;   :commands lsp-ui-mode)
-
-;; Enable lsp-mode for Python
-;; Use conda environment
-;; mkdir -p ~/miniconda3
-;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-;; rm ~/miniconda3/miniconda.sh
-;; conda activate
-;; conda install pyright
-;; sudo apt install -y nodejs npm
-;; sudo npm install -g pyright
-;; (use-package lsp-pyright
-;;   :ensure t
-;;   :custom
-;;   (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-;;   (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
-;;   :hook ((python-mode python-ts-mode) . (lambda ()
-;;                                           (require 'lsp-pyright)
-;;                                           ;; avoid python-flymake diagnostics, can't detect import
-;;                                           (setq flymake-diagnostic-functions nil)
-;;                                           (lsp))))  ; or lsp-deferred
-
-;; ;; Enable lsp-mode for scheme
-;; ;; https://github.com/emacsmirror/lsp-scheme
-;; ;; sudo apt install guile-3.0 guile-3.0-dev
-;; (use-package lsp-scheme
-;;   :ensure t
-;;   :custom
-;;   (lsp-scheme-implementation "guile")
-;;   :hook (scheme-mode . (lambda ()
-;; 			 (require 'lsp-scheme)
-;; 			 (lsp-scheme))))
-
-
 ;; Eglot
 (use-package eglot
   :after treesit
   :config
   (add-to-list 'eglot-server-programs
-               ;; curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-               ;; bash Miniforge3-$(uname)-$(uname -m).sh
-               ;; mamba install -c conda-forge python-lsp-server
-               ;; '((python-mode python-ts-mode) . ("pylsp")))
-               ;; '((python-mode python-ts-mode) . ("~/miniforge3/bin/pylsp")))
-               ;; # pyright
-               ;; mamba install -c conda-forge nodejs=18 pyright
+               ;; pyright
+               ;; npm install -g pyright
                '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
@@ -431,7 +317,7 @@
                '(racket-mode . ("racket" "-l" "racket-langserver")))
   :custom
   (eglot-ignored-server-capabilities
-   ;; disable eglot symbol highlight
+   ;; disable eglot symbol highlight to avoid conflict between highlight-symbol
    '(:documentHighlightProvider))
   :config
   (setq read-process-output-max (* 1024 1024)) ;; 1MB
@@ -450,14 +336,18 @@
 ;; M-x treesit-install-language-grammar
 (use-package treesit
   :init
-  (let ((tree-sitter-dir
-         (expand-file-name "tree-sitter/"
-                           user-emacs-directory)))
-    (dolist (lang '(c cpp python))
-      (let ((lib-file (format "%slibtree-sitter-%s.so" tree-sitter-dir lang)))
-        (unless (file-exists-p lib-file)
-          (treesit-install-language-grammar lang)
-          ))))
+  (defun ensure-treesit-grammar-installed (lang)
+    "Ensure that the Tree-sitter grammar for LANG is installed."
+    (let ((tree-sitter-dir (expand-file-name "tree-sitter/" user-emacs-directory))
+          (lib-file (format "%slibtree-sitter-%s.so" tree-sitter-dir lang)))
+      (unless (file-exists-p lib-file)
+          (treesit-install-language-grammar lang))))
+  (defun setup-treesit-for-mode ()
+    "Set up Tree-sitter for the current major mode."
+    (pcase major-mode
+      ('python-mode (ensure-treesit-grammar-installed 'python))
+      ('c-mode (ensure-treesit-grammar-installed 'c))
+      ('c++-mode (ensure-treesit-grammar-installed 'c++))))
   :config
   (setq treesit-font-lock-level 4)
   (setq major-mode-remap-alist
@@ -516,10 +406,11 @@
   :ensure t
   :config
   (treemacs-load-theme "all-the-icons"))
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
+(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
@@ -560,17 +451,20 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'undo-tree)
-  (package-refresh-contents)
-  (package-install 'undo-tree))
-(require 'undo-tree)
-(global-undo-tree-mode t)
-;; save history file in specified directory
-(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
-;; if the directory no exist, then make it
-(unless (file-exists-p "~/.emacs.d/undo-tree-history/")
-  (make-directory "~/.emacs.d/undo-tree-history/" t))
-; Undo C-/, Redo C-S-/
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode t)
+  :config
+  ;; Enable persistent history
+  (setq undo-tree-auto-save-history t)
+  ;; save history file in specified directory
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+  ;; if the directory no exist, then make it
+  (unless (file-exists-p "~/.emacs.d/undo-tree-history/")
+    (make-directory "~/.emacs.d/undo-tree-history/" t))
+  ;; Undo C-/, Redo C-S-/
+  )
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ shortcut                                                      ;;;
@@ -582,14 +476,14 @@
 ;; (global-set-key (kbd "C-S-<iso-lefttab>") 'previous-buffer)
 
 ;; C-; comment out/in
-(defun one-line-comment ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (set-mark (point))
-    (end-of-line)
-    (comment-or-uncomment-region (region-beginning) (region-end))))
-(global-set-key (kbd "C-;") 'one-line-comment)
+;; (defun one-line-comment ()
+;;   (interactive)
+;;   (save-excursion
+;;     (beginning-of-line)
+;;     (set-mark (point))
+;;     (end-of-line)
+;;     (comment-or-uncomment-region (region-beginning) (region-end))))
+;; (global-set-key (kbd "C-;") 'one-line-comment)
 
 ;; 
 (defun custom-move-beginning-of-line ()
@@ -617,12 +511,12 @@
 ;;; @ edit mode                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; markdown
-(unless (package-installed-p 'markdown-mode)
-  (package-refresh-contents)
-  (package-install 'markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+(use-package markdown-mode
+  :ensure t
+  :mode
+  (("\\.markdown\\'" . markdown-mode)
+   ("\\.md\\'" . markdown-mode)
+   ("README\\.md\\'" . gfm-mode)))
 
 ;; cmake
 (use-package cmake-mode
@@ -632,9 +526,9 @@
   )
 
 ;; racket
-(use-package racket-mode
-  :ensure t
-  )
+;; (use-package racket-mode
+;;   :ensure t
+;;   )
 
 ;; yaml
 (use-package yaml-mode
@@ -646,6 +540,7 @@
 (setq python-indent-offset 4)
 (use-package conda
   :ensure t
+  :defer t
   :init
   (setq conda-anaconda-home "~/miniforge3")
   (setq conda-env-home-directory "~/miniforge3")
@@ -660,46 +555,53 @@
                            (eglot-reconnect
                             (eglot-current-server)))))
   )
+
+;; Docker
+(use-package dockerfile-mode
+  :ensure t
+  :mode ("Dockerfile\\'"))
+
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'multiple-cursors)
-  (package-refresh-contents)
-  (package-install 'multiple-cursors))
-(require 'multiple-cursors)
-;; C-u C-M-SPC
-(global-set-key (kbd "C-S-c C-S-c") 'mc/mark-all-dwim)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ;; C-u C-M-SPC
+  (("C-S-c C-S-c" . mc/mark-all-dwim)
+   ("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/unmark-next-like-this)))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'mozc)
-  (package-refresh-contents)
-  (package-install 'mozc))
-(require 'mozc)
-(setq default-input-method "japanese-mozc")
-;; 半角/全角キーで切り替え
-(global-set-key [zenkaku-hankaku] 'toggle-input-method)
-;; 変換キーでmozcオン
-(defun ime-on ()
-  (interactive)
-  (unless current-input-method
-    (toggle-input-method)))
-(global-set-key [henkan] 'ime-on)
-;; 無変換キーでmozcオフ
-
-(defun ime-off ()
-  (interactive)
-  (when current-input-method
-    (toggle-input-method)))
-(global-set-key [muhenkan] 'ime-off)
-(add-hook 'mozc-mode-hook
-	  (lambda ()
- 	    (define-key mozc-mode-map [muhenkan] 'ime-off)))
-;; フォント
-(set-fontset-font t 'japanese-jisx0208 "Migu 1M")
+(use-package mozc
+  :ensure t
+  :init
+  (setq default-input-method "japanese-mozc")
+  (defun ime-on ()
+    (interactive)
+    (unless current-input-method
+      (toggle-input-method)))
+  (global-set-key [henkan] 'ime-on)
+  (defun ime-off ()
+    (interactive)
+    (when current-input-method
+      (toggle-input-method)))
+  :bind
+  (;; 半角/全角キーで切り替え
+   ([zenkaku-hankaku] . toggle-input-method)
+   ;; 変換キーでmozcオン
+   ([henkan] . ime-on)
+   ;; 無変換キーでmozcオフ
+   ([muhenkan] . ime-off))
+  :config
+  ;; フォント
+  (set-fontset-font t 'japanese-jisx0208 "Migu 1M")
+  :hook
+  ;; 無変換キーでmozcオフ
+  (mozc-mode . (lambda ()
+ 	         (define-key mozc-mode-map [muhenkan] 'ime-off))))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ which key                                                     ;;;
