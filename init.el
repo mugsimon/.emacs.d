@@ -402,33 +402,8 @@
   :ensure t
   :after python-ts-mode
   :config
-  ;; (defvar conda-local-home-candidates conda-home-candidates)
-  ;; (defun update-conda-anaconda-home ()
-  ;;   "Update 'conda-anaconda-home' when python file open in current buffer."
-  ;;   (when (or (derived-mode-p 'python-mode)
-  ;;             (derived-mode-p 'python-ts-mode))
-  ;;     (let ((remote-prefix (file-remote-p default-directory)))
-  ;;       (if remote-prefix
-  ;;           (setq-default conda-home-candidates (mapcar (lambda (path) (concat remote-prefix path))
-  ;;                                               conda-local-home-candidates))
-  ;;         (setq-default conda-home-candidates conda-local-home-candidates)))
-  ;;     (conda-env-initialize-interactive-shells)
-  ;;     (conda-env-initialize-eshell)))
-  (defvar conda-local-home-candidates conda-home-candidates)
-  (defun update-conda-anaconda-home ()
-    "Update `conda-anaconda-home` when python file open in current buffer."
-    (let ((remote-prefix (file-remote-p default-directory)))
-      (if remote-prefix
-          (setq-default conda-home-candidates (mapcar (lambda (path) (concat remote-prefix path))
-                                                      conda-local-home-candidates))
-        (setq-default conda-home-candidates conda-local-home-candidates)))
-    (customize-variable 'conda-anaconda-home)
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-    (add-to-list 'tramp-remote-path conda-anaconda-home))
   :hook
   (
-   (python-mode . update-conda-anaconda-home)
-   (python-ts-mode . update-conda-anaconda-home)
    (conda-postactivate . (lambda ()
                            (eglot-reconnect
                             (eglot-current-server))))
