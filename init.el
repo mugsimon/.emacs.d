@@ -336,6 +336,9 @@
 ;; M-x treesit-install-language-grammar
 (use-package treesit
   :init
+  (setq treesit-language-source-alist
+        '((scheme "https://github.com/6cdh/tree-sitter-scheme")
+          (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")))
   (defun ensure-treesit-grammar-installed (lang)
     "Ensure that the Tree-sitter grammar for LANG is installed."
     (let ((tree-sitter-dir (expand-file-name "tree-sitter/" user-emacs-directory))
@@ -345,19 +348,89 @@
   (defun setup-treesit-for-mode ()
     "Set up Tree-sitter for the current major mode."
     (pcase major-mode
-      ('python-mode (ensure-treesit-grammar-installed 'python))
-      ('c-mode (ensure-treesit-grammar-installed 'c))
-      ('c++-mode (ensure-treesit-grammar-installed 'c++))))
+      ('python-ts-mode (ensure-treesit-grammar-installed 'python))
+      ('c-ts-mode (ensure-treesit-grammar-installed 'c))
+      ('c++-ts-mode (ensure-treesit-grammar-installed 'c++))
+      ('dockerfile-ts-mode (ensure-treesit-grammar-installed 'dockerfile))))
   :config
   (setq treesit-font-lock-level 4)
   (setq major-mode-remap-alist
         '(
-          (python-mode . python-ts-mode)          
+          ;; (python-mode . python-ts-mode)          
           (c-mode . c-ts-mode)
           (c++-mode . c++-ts-mode)
           )
         )
   )
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ edit mode                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; markdown
+(use-package markdown-mode
+  :ensure t
+  :mode
+  (("\\.markdown\\'" . markdown-mode)
+   ("\\.md\\'" . markdown-mode)
+   ("README\\.md\\'" . gfm-mode)))
+
+;; cmake
+(use-package cmake-mode
+  :ensure t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
+         ("\\.cmake\\'" . cmake-mode))
+  )
+
+;; racket
+;; (use-package racket-mode
+;;   :ensure t
+;;   )
+
+;; yaml
+(use-package yaml-mode
+  :ensure t
+  :mode ("\\.yml\\'" "\\.yaml\\'")
+  )
+
+;; python
+(use-package python-ts-mode
+  :mode ("\\.py\\'")
+  :init
+  (setq python-indent-offset 4)
+  )
+(use-package conda
+  :ensure t
+  :after python-ts-mode
+  :conig
+  (defvar conda-local-home-candidates conda-home-candidates)
+  (defun update-conda-anaconda-home ()
+    "Update 'conda-anaconda-home' when python file open in current buffer."
+    (when (or (derived-mode-p 'python-mode)
+              (derived-mode-p 'python-ts-mode))
+      (let ((remote-prefix (file-remote-p default-directory)))
+        (if remote-prefix
+            (setq-default conda-home-candidates (mapcar (lambda (path) (concat remote-prefix path))
+                                                conda-local-home-candidates))
+          (setq-default conda-home-candidates conda-local-home-candidates)))
+      (conda-env-initialize-interactive-shells)
+      (conda-env-initialize-eshell)))
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  (conda-mode-line-setup)
+  :hook
+  ((python-mode . update-conda-anaconda-home)
+   (python-ts-mode . update-conda-anaconda-home)
+   (conda-postactivate . (lambda ()
+                           (eglot-reconnect
+                            (eglot-current-server))))
+   (conda-postdeactivate . (lambda ()
+                           (eglot-reconnect
+                            (eglot-current-server)))))
+  )
+
+;; Docker
+(use-package dockerfile-ts-mode
+  :mode ("Dockerfile\\'"))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
@@ -507,59 +580,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq-default indent-tabs-mode nil)
 
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ edit mode                                                     ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; markdown
-(use-package markdown-mode
-  :ensure t
-  :mode
-  (("\\.markdown\\'" . markdown-mode)
-   ("\\.md\\'" . markdown-mode)
-   ("README\\.md\\'" . gfm-mode)))
-
-;; cmake
-(use-package cmake-mode
-  :ensure t
-  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
-         ("\\.cmake\\'" . cmake-mode))
-  )
-
-;; racket
-;; (use-package racket-mode
-;;   :ensure t
-;;   )
-
-;; yaml
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.yml\\'" "\\.yaml\\'")
-  )
-
-;; python
-(setq python-indent-offset 4)
-(use-package conda
-  :ensure t
-  :defer t
-  :init
-  (setq conda-anaconda-home "~/miniforge3")
-  (setq conda-env-home-directory "~/miniforge3")
-  (conda-env-initialize-interactive-shells)
-  (conda-env-initialize-eshell)
-  (conda-mode-line-setup)
-  :hook
-  ((conda-postactivate . (lambda ()
-                           (eglot-reconnect
-                            (eglot-current-server))))
-   (conda-postdeactivate . (lambda ()
-                           (eglot-reconnect
-                            (eglot-current-server)))))
-  )
-
-;; Docker
-(use-package dockerfile-mode
-  :ensure t
-  :mode ("Dockerfile\\'"))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
