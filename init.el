@@ -401,7 +401,6 @@
 (use-package conda
   :ensure t
   :after python-ts-mode
-  :config
   :hook
   (
    (conda-postactivate . (lambda ()
