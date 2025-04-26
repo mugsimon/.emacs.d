@@ -334,7 +334,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; M-x treesit-install-language-grammar
 (use-package treesit
-  :hook (prog-mode . ms:treesit-setup)
+  :hook (after-change-major-mode . ms:treesit-setup)
   :init
   (setq treesit-language-source-alist
         '((scheme     "https://github.com/6cdh/tree-sitter-scheme")
@@ -366,9 +366,7 @@
         (let ((lang (intern (substring mode-name 0 -8))))
           (ms:maybe-install-treesit-grammar lang)))))
   :config
-  (setq treesit-font-lock-level 4)
-  )
-
+  (setq treesit-font-lock-level 4))
 
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; utils                                                           ;;;
