@@ -35,7 +35,6 @@
         ;; ms: additonal color
         (lightblue "#7abeff")
         )
-
     
     (custom-set-faces
      ;; default

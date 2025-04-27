@@ -10,42 +10,35 @@
         ("org" . "https://orgmode.org/elpa/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ language - coding system                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; text file, new buffer
 (prefer-coding-system 'utf-8-unix)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ fonts setting                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(use-package all-the-icons
+(use-package nerd-icons
   :ensure t)
-
 (defvar icons-fonts-setup-done
   (expand-file-name "~/.emacs.d/.fonts-setup-done"))
-
 (unless (file-exists-p icons-fonts-setup-done)
-  ;; Run nerd-icons and all-the-icons setup
-  (all-the-icons-install-fonts t)
+  ;; Run nerd-icons setup
+  (nerd-icons-install-fonts t)
   ;; Update font cache
   (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
   ;; Create the flag file
   (write-region "" nil icons-fonts-setup-done))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq inhibit-startup-message t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - mode line                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - isearch                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -55,8 +48,6 @@
 (define-key isearch-mode-map (kbd "C-e") 'isearch-edit-string)
 ;; Completion search string with TAB
 (define-key isearch-mode-map (kbd "TAB") 'isearch-yank-word)
-;; 
-(define-key isearch-mode-map (kbd "C-c C-l") 'consult-line)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -64,18 +55,15 @@
   :ensure t
   :config
   (load-theme 'timu-macos t))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-to-list 'default-frame-alist '(alpha . (0.90 0.85)))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setq display-line-numbers-width-start t) ;; Disable dynamic width adjustment
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -97,13 +85,11 @@
 (setq auto-save-file-name-transforms
       `((".*" ,(expand-file-name "/tmp/emacsbk") t)))
 (setq auto-save-list-file-prefix "/tmp/emacsbk/.saves-")
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - lockfile                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; make no lockfile
 (setq create-lockfiles nil)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ session                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -114,7 +100,6 @@
       desktop-path (list desktop-dirname))
 ;; cursor memory
 (save-place-mode)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ scroll                                                        ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -138,7 +123,6 @@
 ;; horizontal mouse scroll
 (setq mouse-wheel-tilt-scroll t)
 (setq mouse-wheel-flip-direction t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -151,13 +135,14 @@
 
 (use-package marginalia
   :ensure t
-  :init (marginalia-mode))
-
-(use-package all-the-icons-completion
-  :ensure t
-  :after (marginalia)
   :init
-  (all-the-icons-completion-mode))
+  (marginalia-mode))
+
+(use-package nerd-icons-completion
+  :ensure t
+  :after (marginalia nerd-icons)
+  :init
+  (nerd-icons-completion-mode))
 
 ;; Show the depth of minibuffer recursion when using nested commands.
 (minibuffer-depth-indicate-mode 1)
@@ -166,14 +151,11 @@
   :ensure t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles
-                                          basic)))))
-
+  (completion-category-overrides '((file (styles basic)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ beep off                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq ring-bell-function 'ignore)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ rainbow-mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -189,10 +171,7 @@
     (setq rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
     (when (bound-and-true-p rainbow-mode)
       (rainbow-mode -1)
-      (rainbow-mode 1))
-    )
-  )
-
+      (rainbow-mode 1))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ highlight symbol                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -204,9 +183,7 @@
   (("M-n" . highlight-symbol-next)
    ("M-p" . highlight-symbol-prev))
   :hook
-  (prog-mode . highlight-symbol-mode)
-  )
-
+  (prog-mode . highlight-symbol-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ consult embark                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -226,9 +203,7 @@
    :map isearch-mode-map
    ("M-s e" . consult-isearch-history) ;; enhance isearch-edit-string
    ("M-s l" . consult-line)       ;; enhance isearch-forward
-   ("M-s L" . consult-line-multi)
-   )
-  )
+   ("M-s L" . consult-line-multi)))
 
 (use-package embark
   :ensure t
@@ -241,7 +216,6 @@
   :after (embark consult)
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -281,16 +255,12 @@
   :config
   (setq read-process-output-max (* 4 1024 1024)) ;; 4MB
   :hook
-  (
-   ((python-mode python-ts-mode) . eglot-ensure)
+  (((python-mode python-ts-mode) . eglot-ensure)
    ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
    (scheme-mode . eglot-ensure)
    (racket-mode . eglot-ensure)
    ((dockerfile-mode dockerfile-ts-mode) . eglot-ensure)
-   ((html-mode html-ts-mode) . eglot-ensure)
-   )
-  )
-
+   ((html-mode html-ts-mode) . eglot-ensure)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Auto Completion                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -314,21 +284,28 @@
         ("RET" . corfu-complete)
         ("<return>" . corfu-complete)
         ("<tab>" . ms:corfu-expand)
-        ("<backtab>" . corfu-reset)
-        )
-  )
-
+        ("<backtab>" . corfu-reset)))
 (use-package prescient
   :ensure t
+  :custom
+  (completion-category-overrides '((file (styles basic))))
   :config
-  (prescient-persist-mode t))
-
+  (prescient-persist-mode))
 (use-package corfu-prescient
   :ensure t
   :after corfu
   :config
-  (corfu-prescient-mode t))
-
+  (setq completion-category-overrides '((file (styles basic))))
+  (corfu-prescient-mode))
+(use-package nerd-icons-corfu
+  :ensure t
+  :after (corfu nerd-icons)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ flymake                                                       ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tree-sitter                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -341,7 +318,11 @@
           (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
           (python     "https://github.com/tree-sitter/tree-sitter-python")
           (c          "https://github.com/tree-sitter/tree-sitter-c")
-          (cpp        "https://github.com/tree-sitter/tree-sitter-cpp")))
+          (c++        "https://github.com/tree-sitter/tree-sitter-cpp")
+          (js         "https://github.com/tree-sitter/node-tree-sitter")
+          (css        "https://github.com/tree-sitter/tree-sitter-css")
+          (php        "https://github.com/tree-sitter/tree-sitter-php")
+          (json       "https://github.com/tree-sitter/tree-sitter-json")))
   (defun ms:maybe-install-treesit-grammar (lang)
     "If the grammar for current major-mode exists in treesit-language-source-alist, install it if missing."
     (let* ((tree-sitter-dir (expand-file-name "tree-sitter/"
@@ -362,39 +343,17 @@
           '((python-mode . python-ts-mode)
             (c-mode . c-ts-mode)
             (c++-mode . c++-ts-mode)
-            (dockerfile-mode . dockerfile-ts-mode)))
+            (dockerfile-mode . dockerfile-ts-mode)
+            (javascript-mode . js-ts-mode)
+            (css-mode . css-ts-mode)
+            (php-mode . php-ts-mode)
+            (js-json-mode . json-ts-mode)))
     (let ((mode-name (symbol-name major-mode)))
       (when (string-suffix-p "-ts-mode" mode-name)
         (let ((lang (intern (substring mode-name 0 -8))))
           (ms:maybe-install-treesit-grammar lang)))))
   :config
   (setq treesit-font-lock-level 4))
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; utils                                                           ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (defun ms:get-user-from-ssh-config (host)
-;;   "Get user from ~/.ssh/config for a given HOST"
-;;   (with-temp-buffer
-;;     (insert-file-contents (expand-file-name "~/.ssh/config")) ;; read ssh config to buffer
-;;     (goto-char (point-min)) ;; point at config head
-;;     (let ((case-fold-search t)
-;;           (found nil)
-;;           (user nil))
-;;       (while (and (not found)
-;;                   (re-search-forward "^Host[ \t]+\\(.+\\)" nil t))
-;;         (let ((hosts (split-string (match-string 1))))
-;;           (when (member host hosts)
-;;             ;; Read next until next block comes
-;;             (while (and (not found)
-;;                         (re-search-forward
-;;                          "^[ \t]*\\([^ \t\n]+\\)[ \t]+\\(.+\\)" nil t))
-;;               (let ((key (match-string 1))
-;;                     (val (match-string 2)))
-;;                 (when (string= key "User")
-;;                   (setq user val
-;;                         found t)))))))
-;;       (when user (string-trim user)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -409,19 +368,16 @@
 (use-package cmake-mode
   :ensure t
   :mode (("CMakeLists\\.txt\\'" . cmake-mode)
-         ("\\.cmake\\'" . cmake-mode))
-  )
+         ("\\.cmake\\'" . cmake-mode)))
 ;; racket
 (use-package racket-mode
   :ensure t
   :mode
-  ("\\.rkt\\'")
-  )
+  ("\\.rkt\\'"))
 ;; yaml
 (use-package yaml-mode
   :ensure t
-  :mode ("\\.yml\\'" "\\.yaml\\'")
-  )
+  :mode ("\\.yml\\'" "\\.yaml\\'"))
 ;; PHP
 (use-package php-mode
   :ensure t
@@ -565,6 +521,15 @@
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package tramp
+  :init
+  (defun ms:tramp-reconnect ()
+    "Reconect tramp access"
+    (interactive)
+    (when (file-remote-p default-directory)
+      (let ((current-file (buffer-file-name)))
+        (when current-file
+          (message "Reconnectiong to remote file: %s" current-file)
+          (find-alternate-file current-file)))))
   :custom
   (tramp-default-method "ssh")
   (tramp-verbose 1)
@@ -574,46 +539,41 @@
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   :hook (tramp-cleanup-hook . (lambda ()
                                 (message
-                                 "Tramp connection lost, trying to reconnect..."))))
+                                 "Tramp connection lost, trying to reconnect...")
+                                (ms:tramp-reconnect))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ projectile                                                    ;;;
+;;; @ project management                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
-  :ensure t)
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ treemacs                                                      ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+  :ensure t
+  :init
+  (projectile-mode))
 (use-package treemacs
   :ensure t
   :defer t
   :bind (:map global-map
               ("C-x t t" . treemacs)
               ("C-x t a" . treemacs-add-and-display-current-project)
-              ("C-x t e" . treemacs-add-and-display-current-project-exclusively)
-              )
-  :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
-  )
-
+              ("C-x t e" . treemacs-add-and-display-current-project-exclusively))
+  :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1))))
 (use-package treemacs-projectile
   :ensure t
-  :after (treemacs projectile))
-
+  :after (treemacs projectile)
+  :config
+  (treemacs-projectile))
 ;; treemacs theme
-(use-package treemacs-all-the-icons
-  :after treemacs
+(use-package treemacs-nerd-icons
+  :after (treemacs nerd-icons)
   :ensure t
   :config
-  (treemacs-load-theme "all-the-icons"))
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ flymake                                                       ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
-
+  (treemacs-load-theme "nerd-icons"))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
-
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -624,27 +584,22 @@
 (global-set-key (kbd "C-<tab>") 'tab-line-switch-to-next-tab)
 (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-line-switch-to-prev-tab)
 (global-set-key (kbd "C-x t k") 'tab-line-close-tab)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tool bar mode                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (tool-bar-mode -1) ;; disable tool bar
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (global-auto-revert-mode t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto paring                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (electric-pair-mode t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ truncate-lines                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-hook 'prog-mode-hook (lambda () (setq truncate-lines t)))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -660,9 +615,9 @@
   ;; if the directory no exist, then make it
   (unless (file-exists-p "~/.emacs.d/undo-tree-history/")
     (make-directory "~/.emacs.d/undo-tree-history/" t))
+  (setq undo-tree-limit 1000)
   ;; Undo C-/, Redo C-S-/
   )
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ shortcut                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -683,7 +638,7 @@
 ;; (global-set-key (kbd "C-;") 'one-line-comment)
 
 ;; 
-(defun custom-move-beginning-of-line ()
+(defun ms:move-beginning-of-line ()
   (interactive)
   (if (= (point) (line-beginning-position))
       (back-to-indentation)
@@ -691,20 +646,17 @@
 	    (progn (back-to-indentation)
                    (point)))
     (move-beginning-of-line 1))))
-(global-set-key (kbd "C-a") 'custom-move-beginning-of-line)
+(global-set-key (kbd "C-a") 'ms:move-beginning-of-line)
 
 ;; code jump history
 ;; M-,
 (global-set-key (kbd "<mouse-8>") 'xref-go-back)
 ;; M-C-,
 (global-set-key (kbd "<mouse-9>") 'xref-go-forward)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq-default indent-tabs-mode nil)
-
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -746,7 +698,6 @@
   ;; 無変換キーでmozcオフ
   (mozc-mode . (lambda ()
  	         (define-key mozc-mode-map [muhenkan] 'ime-off))))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ which key                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -754,15 +705,14 @@
   :ensure t
   :diminish which-key-mode
   :hook (after-init . which-key-mode))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom file load                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror 'nomessage)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom theme                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-theme-file "~/.emacs.d/themes/custom-theme.el")
 (load custom-theme-file 'noerror 'nomessage)
+;;; init.el ends here
