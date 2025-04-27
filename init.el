@@ -348,6 +348,8 @@
                                               user-emacs-directory))
            (lib-file (format "%slibtree-sitter-%s.so"
                              tree-sitter-dir lang)))
+      (unless (file-exists-p tree-sitter-dir)
+        (make-directory tree-sitter-dir t))
       (when (and (assoc lang treesit-language-source-alist)
                  (not (file-exists-p lib-file)))
         (when (y-or-n-p (format
