@@ -528,24 +528,10 @@
            (config-path (expand-file-name "pyrightconfig.json" project-root))
            (gitignore-path (expand-file-name ".gitignore" project-root))
            (remote (file-remote-p default-directory))
-           ;; (remote-user (when remote
-           ;;                (or (tramp-file-name-user
-           ;;                     (tramp-dissect-file-name default-directory))
-           ;;                    (ms:guess-user-from-buffer))))
-           ;; (remote-host (when remote
-           ;;                (tramp-file-name-host
-           ;;                 (tramp-dissect-file-name default-directory))))
-           ;; (venv-path (if remote
-           ;;                (format "/home/%s/miniforge3/envs" remote-user)
-           ;;              (expand-file-name "~/miniforge3/envs")))
            (venv-path (ms:find-venv-path))
            (pyright-venv-path (if remote
                                   (format "%s%s" remote venv-path)
                                 venv-path))
-           ;; (venv-list (if (file-directory-p pyright-venv-path)
-           ;;                (directory-files pyright-venv-path nil "^[^.]")
-           ;;              (user-error "Error: venv path does not exist: %s"
-           ;;                          pyright-venv-path)))
            (venv-list (directory-files pyright-venv-path nil "^[^.]"))
            (venv (completing-read "Choose Python environment: " venv-list))
            (config `(("venvPath" . ,venv-path)
@@ -587,7 +573,6 @@
   :hook (tramp-cleanup-hook . (lambda ()
                                 (message
                                  "Tramp connection lost, trying to reconnect..."))))
-tramp-completion-function-alist
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ projectile                                                    ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
