@@ -393,7 +393,6 @@
 ;;                   (setq user val
 ;;                         found t)))))))
 ;;       (when user (string-trim user)))))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -441,31 +440,30 @@
   ;;     (let ((alist (ssh-config-parse-buffer)))
   ;;       (cdr (assoc 'User (assoc host alist))))))
   (defun ms:get-user-from-ssh-config (host)
-  "Get the User for HOST from ~/.ssh/config safely."
-  (with-temp-buffer
-    (insert-file-contents (expand-file-name "~/.ssh/config"))
-    (let ((case-fold-search t)
-          (user nil)
-          (blocks '()))
-      ;; Separate file as Host unit
-      (goto-char (point-min))
-      (while (re-search-forward "^Host[ \t]+\\(.+\\)" nil t)
-        (let ((start (line-beginning-position))
-              (hosts (split-string (match-string 1)))
-              (end (if (re-search-forward "^Host[ \t]+" nil t)
-                       (line-beginning-position)
-                     (point-max))))
-          (push (list :hosts hosts :start start :end end) blocks)
-          (goto-char end)))
-      ;; Search each block
-      (dolist (block blocks)
-        (when (member host (plist-get block :hosts))
-          (goto-char (plist-get block :start))
-          (while (re-search-forward "^[ \t]*\\([^ \t\n]+\\)[ \t]+\\(.+\\)" (plist-get block :end) t)
-            (when (string= (match-string 1) "User")
-              (setq user (string-trim (match-string 2))))))
-        )
-      user)))
+    "Get the User for HOST from ~/.ssh/config safely."
+    (with-temp-buffer
+      (insert-file-contents (expand-file-name "~/.ssh/config"))
+      (let ((case-fold-search t)
+            (user nil)
+            (blocks '()))
+        ;; Separate file as Host unit
+        (goto-char (point-min))
+        (while (re-search-forward "^Host[ \t]+\\(.+\\)" nil t)
+          (let ((start (line-beginning-position))
+                (hosts (split-string (match-string 1)))
+                (end (if (re-search-forward "^Host[ \t]+" nil t)
+                         (line-beginning-position)
+                       (point-max))))
+            (push (list :hosts hosts :start start :end end) blocks)
+            (goto-char end)))
+        ;; Search each block
+        (dolist (block blocks)
+          (when (member host (plist-get block :hosts))
+            (goto-char (plist-get block :start))
+            (while (re-search-forward "^[ \t]*\\([^ \t\n]+\\)[ \t]+\\(.+\\)" (plist-get block :end) t)
+              (when (string= (match-string 1) "User")
+                (setq user (string-trim (match-string 2)))))))
+        user)))
   (defun ms:guess-user-from-buffer ()
     "Guess the username from the buffer's TRAMP file path."
     (let ((file buffer-file-name))
@@ -477,10 +475,51 @@
        ((and file (file-remote-p file))
         (let ((host (tramp-file-name-host (tramp-dissect-file-name file))))
           (ms:get-user-from-ssh-config host))))))
+  (defun ms:find-venv-path ()
+    "Find venv path"
+    (let* ((base-paths '(".anaconda"
+                         ".anaconda3"
+                         ".miniconda"
+                         ".miniconda3"
+                         ".miniforge3"
+                         ".mambaforge"
+                         "anaconda3"
+                         "miniconda3"
+                         "miniforge3"
+                         "mambaforge"
+                         "opt/miniconda3"
+                         "/opt/miniconda3"
+                         "/usr/bin/anaconda3"
+                         "/usr/local/anaconda3"
+                         "/usr/local/miniconda3"
+                         "/usr/local/Caskroom/miniconda/base"
+                         ".conda"))
+           (remote (file-remote-p default-directory))
+           (remote-user (when remote
+                          (or (tramp-file-name-user
+                               (tramp-dissect-file-name default-directory))
+                              (ms:guess-user-from-buffer))))
+           (candidates (mapcar (lambda (path)
+                                 (let ((path-with-envs (format "%s/envs" path)))
+                                   (if (string-prefix-p "/" path-with-envs)
+                                       path-with-envs
+                                     (if remote-user
+                                         (format "/home/%s/%s" remote-user path-with-envs)
+                                       (expand-file-name (format "~/%s" path-with-envs))))))
+                               base-paths))
+           (venv-path (seq-find (lambda (candidate)
+                                  (let ((venv-path (if remote
+                                                       (format "%s%s" remote candidate)
+                                                     candidate)))
+                                    (file-directory-p venv-path)))
+                                candidates)))
+      (if venv-path
+          venv-path
+        (user-error "Error: No Conda directory found"))))
   (require 'json)
   (defun pyright-env ()
     "Change conda env for pyright"
-    ;; Set pyrightconfig.json based on local or remote Pyrhon env for the current buffer
+    ;; Set pyrightconfig.json based on local or remote Python env for the current buffer
     (interactive)
     (let* ((project (eglot--project (eglot-current-server)))
            (project-root (if project
@@ -489,23 +528,25 @@
            (config-path (expand-file-name "pyrightconfig.json" project-root))
            (gitignore-path (expand-file-name ".gitignore" project-root))
            (remote (file-remote-p default-directory))
-           (remote-user (when remote
-                          (or (tramp-file-name-user
-                               (tramp-dissect-file-name default-directory))
-                              (ms:guess-user-from-buffer))))
-           (remote-host (when remote
-                          (tramp-file-name-host
-                           (tramp-dissect-file-name default-directory))))
-           (venv-path (if remote
-                          (format "/home/%s/miniforge3/envs" remote-user)
-                        (expand-file-name "~/miniforge3/envs")))
+           ;; (remote-user (when remote
+           ;;                (or (tramp-file-name-user
+           ;;                     (tramp-dissect-file-name default-directory))
+           ;;                    (ms:guess-user-from-buffer))))
+           ;; (remote-host (when remote
+           ;;                (tramp-file-name-host
+           ;;                 (tramp-dissect-file-name default-directory))))
+           ;; (venv-path (if remote
+           ;;                (format "/home/%s/miniforge3/envs" remote-user)
+           ;;              (expand-file-name "~/miniforge3/envs")))
+           (venv-path (ms:find-venv-path))
            (pyright-venv-path (if remote
                                   (format "%s%s" remote venv-path)
                                 venv-path))
-           (venv-list (if (file-directory-p pyright-venv-path)
-                          (directory-files pyright-venv-path nil "^[^.]")
-                        (user-error "Error: venv path does not exist: %s"
-                                    pyright-nenv-path)))
+           ;; (venv-list (if (file-directory-p pyright-venv-path)
+           ;;                (directory-files pyright-venv-path nil "^[^.]")
+           ;;              (user-error "Error: venv path does not exist: %s"
+           ;;                          pyright-venv-path)))
+           (venv-list (directory-files pyright-venv-path nil "^[^.]"))
            (venv (completing-read "Choose Python environment: " venv-list))
            (config `(("venvPath" . ,venv-path)
                      ("venv" . ,venv)))
@@ -546,13 +587,12 @@
   :hook (tramp-cleanup-hook . (lambda ()
                                 (message
                                  "Tramp connection lost, trying to reconnect..."))))
-
+tramp-completion-function-alist
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ projectile                                                    ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
   :ensure t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ treemacs                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -577,7 +617,6 @@
   :ensure t
   :config
   (treemacs-load-theme "all-the-icons"))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
