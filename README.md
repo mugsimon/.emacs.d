@@ -3,7 +3,7 @@ This repository contains my personal Emacs configuration, tailored to enhance pr
 
 ## Customization ##
 - [timu-macos-theme](https://emacsthemes.com/themes/timu-macos-dark-&-light.html) with some custom faces.
-- **rainbow-mode-mini** minimal version of [rainbow-mode](https://elpa.gnu.org/packages/rainbow-mode.html)  works for only hexadecimal colors.
+- **rainbow-mode-hex-only** [rainbow-mode](https://elpa.gnu.org/packages/rainbow-mode.html) works for only hexadecimal colors.
 - **ms:corfu-expand** combination of `corfu-expand` and `corfu-complete` triggered by TAB key.
 - **pyright-env** changes conda environment for pyright(eglot). It works for both local and remote(TRAMP).
 - **ms:move-beginning-of-line** toggle beginning of line and indent head. Enhanced `move-beginning-of-line` binded `C-a`.

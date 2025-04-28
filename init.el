@@ -105,25 +105,25 @@
 ;;; @ scroll                                                        ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; keep kersol when scrolling
-(setq scroll-preserve-screen-position nil)
+(setopt scroll-preserve-screen-position nil)
 ;; small scroll
-(setq scroll-conservatively 10000)
+(setopt scroll-conservatively 10000)
 ;; line overlay when scrolling
-(setq next-screen-context-lines 1)
+(setopt next-screen-context-lines 1)
 ;; keep redisplay
-(setq redisplay-dont-pause t)
+(setopt redisplay-dont-pause t)
 
 ;; mouse scroll
-(setq mouse-wheel-scroll-amount '(1))
-(setq mouse-wheel-progressive-speed t)
+(setopt mouse-wheel-scroll-amount '(1))
+(setopt mouse-wheel-progressive-speed t)
 
 ;; horizontal scroll margin
-(setq hscroll-margin 1)
-(setq hscroll-step 1)
+(setopt hscroll-margin 1)
+(setopt hscroll-step 1)
 
 ;; horizontal mouse scroll
-(setq mouse-wheel-tilt-scroll t)
-(setq mouse-wheel-flip-direction t)
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-flip-direction t)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -131,7 +131,7 @@
 
 ;; Enable a persistent minibuffer history
 (savehist-mode 1)
-(setq savehist-additional-variables '(search-ring
+(setopt savehist-additional-variables '(search-ring
                                       regexp-search-ring))
 
 (use-package marginalia
@@ -156,7 +156,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ beep off                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq ring-bell-function 'ignore)
+(setopt ring-bell-function 'ignore)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ rainbow-mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -164,15 +164,13 @@
   :ensure t
   :config
   (rainbow-mode nil)
-  (defun rainbow-mode-mini ()
+  (defun rainbow-mode-hex-only ()
     "Customize rainbow-mode to only highlight hex color codes."
     (interactive)
-    (setq rainbow-html-colors nil) ;; HTMLの色名を無効化
-    (setq rainbow-x-colors nil)    ;; CSS色名を無効化
-    (setq rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
-    (when (bound-and-true-p rainbow-mode)
-      (rainbow-mode -1)
-      (rainbow-mode 1))))
+    (setopt rainbow-html-colors nil) ;; HTMLの色名を無効化
+    (setopt rainbow-x-colors nil)    ;; CSS色名を無効化
+    (setopt rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
+    (rainbow-mode t))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ highlight symbol                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -578,10 +576,10 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
+(setopt gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024))))
+            (setopt gc-cons-threshold (* 16 1024 1024))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
