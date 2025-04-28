@@ -1,7 +1,6 @@
 ;;; emacs setting file
 ;;; mugsimon
 
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ package manager                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -11,61 +10,36 @@
         ("org" . "https://orgmode.org/elpa/")
         ("gnu" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ language - coding system                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; default 
-(set-default-coding-systems 'utf-8-unix)
 ;; text file, new buffer
 (prefer-coding-system 'utf-8-unix)
-;; file name
-(set-file-name-coding-system 'utf-8-unix)
-;; keyboard input
-(set-keyboard-coding-system 'utf-8-unix)
-;; subprocess
-;; (setq default-process-coding-system '(undecided-dos . utf-8-unix))
-(setq default-process-coding-system '(utf-8-unix . utf-8-unix))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ fonts setting                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package nerd-icons
-  :ensure t)
-
-(use-package all-the-icons
-  :ensure t)
-
-(defvar all-the-icons-setup-done
-  (expand-file-name "~/.emacs.d/.fonts-setup-done"))
-
-(unless (file-exists-p all-the-icons-setup-done)
-  ;; Run nerd-icons and all-the-icons setup
-  (nerd-icons-install-fonts t)
-  (all-the-icons-install-fonts t)
-  ;; Update font cache
-  (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
-  ;; Create the flag file
-  (write-region "" nil all-the-icons-setup-done))
-
+  :ensure t
+  :init
+  (defvar icons-fonts-setup-done
+    (expand-file-name "~/.emacs.d/.fonts-setup-done"))
+  (unless (file-exists-p icons-fonts-setup-done)
+    ;; Run nerd-icons setup
+    (nerd-icons-install-fonts t)
+    ;; Update font cache
+    (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
+    ;; Create the flag file
+    (write-region "" nil icons-fonts-setup-done)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq inhibit-startup-message t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - mode line                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; show line num
-;; (line-number-mode t)
-;; show column num
-;; (column-number-mode t)
-
 (use-package doom-modeline
   :ensure t
-  :hook (after-init . doom-modeline-mode)
-  )
-
+  :hook (after-init . doom-modeline-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - isearch                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -75,29 +49,22 @@
 (define-key isearch-mode-map (kbd "C-e") 'isearch-edit-string)
 ;; Completion search string with TAB
 (define-key isearch-mode-map (kbd "TAB") 'isearch-yank-word)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - theme                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package timu-macos-theme
   :ensure t
   :config
-  (load-theme 'timu-macos t)
-  )
-
+  (load-theme 'timu-macos t))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - window transparency                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (add-to-list 'default-frame-alist '(alpha . (0.90 0.85)))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (global-display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setq display-line-numbers-width-start t) ;; Disable dynamic width adjustment
-(setq display-line-numbers-width 3)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -112,123 +79,106 @@
       (cons (cons "\\.*$" (expand-file-name "/tmp/emacsbk"))
             backup-directory-alist))
 ;;; Auto Save
-;; auto backup while editing
-(setq backup-inhibited nil)
-;; not delete auto backup file when close
-(setq delete-auto-save-files nil)
-;; not add specific file name and prefix for auto backup
-(setq auto-save-list-file-name nil)
-(setq auto-save-list-file-prefix nil)
-;; backup interval (second)
-(setq auto-save-timeout 3)
-;; backup interval key stroke
-(setq auto-save-interval 100)
+(setq auto-save-default t) ;; enable auto save
+(setq auto-save-timeout 3) ;; backup interval (second)
+(setq auto-save-interval 100) ;; backup interval key stroke
 ;; editing file directory(##)
 (setq auto-save-file-name-transforms
       `((".*" ,(expand-file-name "/tmp/emacsbk") t)))
-
+(setq auto-save-list-file-prefix "/tmp/emacsbk/.saves-")
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - lockfile                                               ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; make no lockfile
 (setq create-lockfiles nil)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ session                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; save desktop session
 (desktop-save-mode)
-
+;; save desktop session file to .emacs.d
+(setq desktop-dirname "~/.emacs.d/desktop/"
+      desktop-path (list desktop-dirname))
 ;; cursor memory
 (save-place-mode)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ scroll                                                        ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; keep kersol when scrolling
-(setq scroll-preserve-screen-position nil)
+(setopt scroll-preserve-screen-position nil)
 ;; small scroll
-(setq scroll-conservatively 10000)
+(setopt scroll-conservatively 10000)
 ;; line overlay when scrolling
-(setq next-screen-context-lines 1)
+(setopt next-screen-context-lines 1)
 ;; keep redisplay
-(setq redisplay-dont-pause t)
+(setopt redisplay-dont-pause t)
 
 ;; mouse scroll
-(setq mouse-wheel-scroll-amount '(1))
-(setq mouse-wheel-progressive-speed t)
+(setopt mouse-wheel-scroll-amount '(1))
+(setopt mouse-wheel-progressive-speed t)
 
 ;; horizontal scroll margin
-(setq hscroll-margin 1)
-(setq hscroll-step 1)
+(setopt hscroll-margin 1)
+(setopt hscroll-step 1)
 
 ;; horizontal mouse scroll
-(setq mouse-wheel-tilt-scroll t)
-(setq mouse-wheel-flip-direction t)
-
+(setopt mouse-wheel-tilt-scroll t)
+(setopt mouse-wheel-flip-direction t)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (fido-vertical-mode t)
 
-;; Enable a persistent minibuffer history 
+;; Enable a persistent minibuffer history
 (savehist-mode 1)
-(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(setopt savehist-additional-variables '(search-ring
+                                      regexp-search-ring))
 
 (use-package marginalia
   :ensure t
-  :init
+  :config
   (marginalia-mode))
 
-(use-package all-the-icons-completion
+(use-package nerd-icons-completion
   :ensure t
-  :after (marginalia)
-  :init
-  (all-the-icons-completion-mode))
+  :after (marginalia nerd-icons)
+  :config
+  (nerd-icons-completion-mode))
 
 ;; Show the depth of minibuffer recursion when using nested commands.
 (minibuffer-depth-indicate-mode 1)
 
-;; To make the minibuffer appear centered
-;; (setq resize-mini-windows 'grow-only)
-;; (setq max-mini-window-height 0.3)
-
-;; (use-package embark
-;;   :ensure t
-;;   :bind
-;;   (("C-." . embark-act) ;; Actions for the selected candidate
-;;    ("C-;" . embark-dwim))) ;; Do what I mean
-
-;; (use-package orderless
-;;   :ensure t
-;;   :custom
-;;   (completion-styles '(orderless basic))
-;;   (completion-category-overrides '((file (styles basic partial-completion)))))
-
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ beep off                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq ring-bell-function 'ignore)
-
+(setopt ring-bell-function 'ignore)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ rainbow-mode                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package rainbow-mode
   :ensure t
-  :init
+  :config
   (rainbow-mode nil)
-  (defun rainbow-mode-limited ()
-    "Customize rainbow-mode to only highlight hex color codes."
+  (defvar rainbow-mode-hex-only-p nil
+    "If non-nil, rainbow-mode will hightlight only hexadecimal color codes.")
+  (defun rainbow-mode-toggle-hex-only ()
+    "Toggle rainbow-mode between highlighting only hexadecimal colors and all colors."
     (interactive)
-    (setq rainbow-html-colors nil) ;; HTMLの色名を無効化
-    (setq rainbow-x-colors nil)    ;; CSS色名を無効化
-    (setq rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
-    (when (bound-and-true-p rainbow-mode)
-      (rainbow-mode -1)
-      (rainbow-mode 1))
-    )
-  )
-
+    (if rainbow-mode-hex-only-p
+	(progn (setopt rainbow-html-colors t) ;; enable HTML color
+	       (setopt rainbow-x-colors t)    ;; enable CSS color
+	       (message "Rainbow mode: All colors highlighted"))
+      (progn (setopt rainbow-html-colors nil) ;; enable HTML color
+	     (setopt rainbow-x-colors nil)    ;; enable CSS color
+	     (setopt rainbow-hexadecimal-colors t)
+	     (message "Rainbow mode: Highlighting only hexadecimal colors")))
+    (setopt rainbow-mode-hex-only-p (not rainbow-mode-hex-only-p))
+    (rainbow-mode t)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ highlight symbol                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -237,186 +187,62 @@
   :custom
   (highlight-symbol-idle-delay 0.3)
   :bind
-  (("M-n" . highlight-symbol-nxext)
+  (("M-n" . highlight-symbol-next)
    ("M-p" . highlight-symbol-prev))
   :hook
-  (prog-mode . highlight-symbol-mode)
-  )
-
+  (prog-mode . highlight-symbol-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ consult                                                       ;;;
+;;; @ consult embark                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Improve evaluation and command completion
-;; (use-package consult
-;;   :ensure t
-;;   :bind
-;;   (
-;;    ;; ("C-s" . consult-line)
-;;    ("M-s l" . consult-line)
-;;    ("M-y" . consult-yank-pop)
-;;    )
-;;   )
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ Auto Completion                                               ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (use-package company
-;;   :ensure t
-;;   :init
-;;   ;; Enable company-mode globally
-;;   (global-company-mode)
-;;   :custom
-;;   ;; Set delay before completion suggestions appear
-;;   (company-idle-delay 0.0)
-;;   ;; Minimum prefix length before suggestions are shown
-;;   (company-minimum-prefix-length 1)
-;;   ;; Enable wrap-around selection in completion candidates
-;;   (company-selection-wrap-around t)
-;;   ;; Non-exact match
-;;   (company-require-match 'never)
-;;   ;; Automatic expand
-;;   (company-auto-expand t)
-;;   ;; Set backends
-;;   (company-backends '((company-capf)))
-;;   ;; Sort candidates
-;;   (company-transformers '(company-sort-by-occurrence
-;;                           company-sort-by-backend-importance
-;;                           company-sort-prefer-same-case-prefix))
-;;   :bind
-;;   ;; Use Enter/Return to complete the current selection
-;;   (:map company-active-map
-;;         ("RET" . company-complete-selection)
-;;         ("<return>" . company-complete-selection)
-;;         ("<tab>" . company-complete)
-;;         )
-;;   )
-
-;; (use-package company-statistics
-;;   :ensure t
-;;   :config
-;;   (company-statistics-mode))
-
-(use-package corfu
+(use-package consult
   :ensure t
-  :init
-  (global-corfu-mode)
-  (corfu-history-mode)
-  (corfu-popupinfo-mode)
-  (defun ms-corfu-expand ()
-    (interactive)
-    (unless (corfu-expand)
-      (corfu-complete)))
-  :custom
-  (corfu-cycle t)
-  (corfu-auto t)
-  (corfu-auto-delay 0.0)
-  (corfu-auto-prefix 1)
   :bind
-  (:map corfu-map
-        ("RET" . corfu-complete)
-        ("<return>" . corfu-complete)
-        ("<tab>" . ms-corfu-expand)
-        ("<backtab>" . corfu-reset)
-        )
-  )
+  (("C-x b" . consult-buffer)     ;; enhance switch-to-buffer
+   ("M-g g". consult-goto-line)   ;; enhance goto-line
+   ("M-y" . consult-yank-pop)     ;; enhance yank-pop
+   ;; `search-map' M-s bindings
+   ("M-s d" . consult-find)       ;; search files with find in dir
+   ("M-s g" . consult-grep)
+   ("M-s G" . consult-git-grep)
+   ("M-s l" . consult-line)       ;; enhance isearch-forward
+   ("M-s L" . consult-line-multi)
+   :map isearch-mode-map
+   ("M-s e" . consult-isearch-history) ;; enhance isearch-edit-string
+   ("M-s l" . consult-line)       ;; enhance isearch-forward
+   ("M-s L" . consult-line-multi)))
 
-(use-package prescient
+(use-package embark
   :ensure t
-  :config
-  (prescient-persist-mode t))
+  :bind
+  (("C-." . embark-act)    ;; Actions for the selected candidate
+   ("C-;" . embark-dwim))) ;; Do what I mean
 
-(use-package corfu-prescient
+(use-package embark-consult
   :ensure t
-  :after corfu
-  :config
-  (corfu-prescient-mode t))
+  :after (embark consult)
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; ;; lsp-mode
-;; (use-package lsp-mode
-;;   :ensure t
-;;   :init
-;;   (setq read-process-output-max (* 1024 1024))
-;;   :custom
-;;   ;; clangd
-;;   ;; sudo apt install clangd
-;;   (lsp-clients-clangd-executable "clangd")
-;;   :config
-;;   ;; navigation
-;;   (define-key lsp-mode-map (kbd "M-n") 'lsp-ui-find-next-reference)
-;;   (define-key lsp-mode-map (kbd "M-p") 'lsp-ui-find-prev-reference)
-;;   :hook (;; Enable lsp-mode for C, C++
-;;          ((c-mode c++-mode) . lsp)
-;;          ((racket-mode) . lsp)
-;;          )
-;;   :commands lsp)
-
-;; ;; lsp-ui
-;; (use-package lsp-ui
-;;   :ensure t
-;;   :custom
-;;   ;; lsp-ui-side-line
-;;   ;; (lsp-ui-sideline-show-hover t)
-;;   (lsp-ui-sideline-ignore-duplicate t)
-;;   ;; lsp-ui-peek
-;;   (lsp-ui-peek-enable t)
-;;   :config
-;;   ;; M-. show definitions
-;;   (define-key lsp-ui-mode-map [remap xref-find-definitions] #'lsp-ui-peek-find-definitions  )
-;;   ;; M-? show referances
-;;   (define-key lsp-ui-mode-map [remap xref-find-references] #'lsp-ui-peek-find-references)
-;;   :commands lsp-ui-mode)
-
-;; Enable lsp-mode for Python
-;; Use conda environment
-;; mkdir -p ~/miniconda3
-;; wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
-;; bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
-;; rm ~/miniconda3/miniconda.sh
-;; conda activate
-;; conda install pyright
-;; sudo apt install -y nodejs npm
-;; sudo npm install -g pyright
-;; (use-package lsp-pyright
-;;   :ensure t
-;;   :custom
-;;   (lsp-pyright-langserver-command "pyright") ;; or basedpyright
-;;   (lsp-pyright-python-executable-cmd "~/miniconda3/bin/python")
-;;   :hook ((python-mode python-ts-mode) . (lambda ()
-;;                                           (require 'lsp-pyright)
-;;                                           ;; avoid python-flymake diagnostics, can't detect import
-;;                                           (setq flymake-diagnostic-functions nil)
-;;                                           (lsp))))  ; or lsp-deferred
-
-;; ;; Enable lsp-mode for scheme
-;; ;; https://github.com/emacsmirror/lsp-scheme
-;; ;; sudo apt install guile-3.0 guile-3.0-dev
-;; (use-package lsp-scheme
-;;   :ensure t
-;;   :custom
-;;   (lsp-scheme-implementation "guile")
-;;   :hook (scheme-mode . (lambda ()
-;; 			 (require 'lsp-scheme)
-;; 			 (lsp-scheme))))
-
-
 ;; Eglot
 (use-package eglot
   :after treesit
   :config
+  ;; # npm install: https://nodejs.org/ja/download
   (add-to-list 'eglot-server-programs
-               ;; curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
-               ;; bash Miniforge3-$(uname)-$(uname -m).sh
-               ;; mamba install -c conda-forge python-lsp-server
-               ;; '((python-mode python-ts-mode) . ("pylsp")))
-               ;; '((python-mode python-ts-mode) . ("~/miniforge3/bin/pylsp")))
-               ;; # pyright
-               ;; mamba install -c conda-forge nodejs=18 pyright
+               ;; npm install -g pyright
                '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
+  (add-to-list 'eglot-server-programs
+               ;; npm install -g dockerfile-language-server-nodejs
+               '((dockerfile-mode dockerfile-ts-mode) . ("docker-langserver" "--stdio")))
+  (add-to-list 'eglot-server-programs
+               ;; npm i -g vscode-langservers-extracted
+               '((html-mode html-ts-mode) . ("vscode-html-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; git clone https://codeberg.org/rgherdt/scheme-lsp-server.git
                ;; cd scheme-lsp-server
@@ -431,48 +257,293 @@
                '(racket-mode . ("racket" "-l" "racket-langserver")))
   :custom
   (eglot-ignored-server-capabilities
-   ;; disable eglot symbol highlight
+   ;; disable eglot symbol highlight to avoid conflict with highlight-symbol
    '(:documentHighlightProvider))
-  :config
-  (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  (read-process-output-max (* 4 1024 1024)) ;; 4MB
   :hook
-  (
-   ((python-mode python-ts-mode) . eglot-ensure)
+  (((python-mode python-ts-mode) . eglot-ensure)
    ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
    (scheme-mode . eglot-ensure)
    (racket-mode . eglot-ensure)
-   )
-  )
-
+   ((dockerfile-mode dockerfile-ts-mode) . eglot-ensure)
+   ((html-mode html-ts-mode) . eglot-ensure)))
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ Auto Completion                                               ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(use-package corfu
+  :ensure t
+  :config
+  (global-corfu-mode)
+  (corfu-history-mode)
+  (corfu-popupinfo-mode)
+  (defun ms:corfu-expand ()
+    (interactive)
+    (unless (corfu-expand)
+      (corfu-complete)))
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  (corfu-auto-delay 0.1)
+  (corfu-auto-prefix 1)
+  :bind
+  (:map corfu-map
+        ("RET" . corfu-complete)
+        ("<return>" . corfu-complete)
+        ("<tab>" . ms:corfu-expand)
+        ("<backtab>" . corfu-reset)))
+(use-package prescient
+  :ensure t
+  :custom
+  (completion-category-overrides '((file (styles basic))))
+  :config
+  (prescient-persist-mode))
+(use-package corfu-prescient
+  :ensure t
+  :after corfu
+  :custom
+  (completion-category-overrides '((file (styles basic))))
+  (corfu-prescient-mode))
+(use-package nerd-icons-corfu
+  :ensure t
+  :after (corfu nerd-icons)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ flymake                                                       ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tree-sitter                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; M-x treesit-install-language-grammar
 (use-package treesit
+  :hook (after-change-major-mode . ms:treesit-setup)
   :init
-  (let ((tree-sitter-dir
-         (expand-file-name "tree-sitter/"
-                           user-emacs-directory)))
-    (dolist (lang '(c cpp python))
-      (let ((lib-file (format "%slibtree-sitter-%s.so" tree-sitter-dir lang)))
-        (unless (file-exists-p lib-file)
-          (treesit-install-language-grammar lang)
-          ))))
-  :config
-  (setq treesit-font-lock-level 4)
-  (setq major-mode-remap-alist
-        '(
-          (python-mode . python-ts-mode)          
-          (c-mode . c-ts-mode)
-          (c++-mode . c++-ts-mode)
-          )
-        )
-  )
-
+  (setopt treesit-language-source-alist
+          '((scheme     "https://github.com/6cdh/tree-sitter-scheme")
+            (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+            (python     "https://github.com/tree-sitter/tree-sitter-python")
+            (c          "https://github.com/tree-sitter/tree-sitter-c")
+            (c++        "https://github.com/tree-sitter/tree-sitter-cpp")
+            (js         "https://github.com/tree-sitter/node-tree-sitter")
+            (css        "https://github.com/tree-sitter/tree-sitter-css")
+            (php        "https://github.com/tree-sitter/tree-sitter-php")
+            (json       "https://github.com/tree-sitter/tree-sitter-json")))
+  (defun ms:maybe-install-treesit-grammar (lang)
+    "If the grammar for current major-mode exists in treesit-language-source-alist, install it if missing."
+    (let* ((tree-sitter-dir (expand-file-name "tree-sitter/"
+                                              user-emacs-directory))
+           (lib-file (format "%slibtree-sitter-%s.so"
+                             tree-sitter-dir lang)))
+      (unless (file-exists-p tree-sitter-dir)
+        (make-directory tree-sitter-dir t))
+      (when (and (assoc lang treesit-language-source-alist)
+                 (not (file-exists-p lib-file)))
+        (when (y-or-n-p (format
+                         "Tree-sitter grammar for '%s' not found.  Install? "
+                         lang))
+          (treesit-install-language-grammar lang)))))
+  (defun ms:treesit-setup ()
+    "Set up Tree-sitter grammars and remap major modes"
+    (setq major-mode-remap-alist
+          '((python-mode . python-ts-mode)
+            (c-mode . c-ts-mode)
+            (c++-mode . c++-ts-mode)
+            (dockerfile-mode . dockerfile-ts-mode)
+            (javascript-mode . js-ts-mode)
+            (css-mode . css-ts-mode)
+            (php-mode . php-ts-mode)
+            (js-json-mode . json-ts-mode)))
+    (let ((mode-name (symbol-name major-mode)))
+      (when (string-suffix-p "-ts-mode" mode-name)
+        (let ((lang (intern (substring mode-name 0 -8))))
+          (ms:maybe-install-treesit-grammar lang)))))
+  :custom
+  (treesit-font-lock-level 4))
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ edit mode                                                     ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; markdown
+(use-package markdown-mode
+  :ensure t
+  :mode
+  (("\\.markdown\\'" . markdown-mode)
+   ("\\.md\\'" . markdown-mode)
+   ("README\\.md\\'" . gfm-mode))
+  :custom
+  (markdown-split-window-direction 'right)
+  (markdown-live-preview-delete-export 'delete-on-export)
+  (truncate-lines t))
+;; cmake
+(use-package cmake-mode
+  :ensure t
+  :mode
+  (("CMakeLists\\.txt\\'" . cmake-mode)
+   ("\\.cmake\\'" . cmake-mode)))
+;; racket
+(use-package racket-mode
+  :ensure t
+  :mode
+  ("\\.rkt\\'"))
+;; yaml
+(use-package yaml-mode
+  :ensure t
+  :mode
+  ("\\.yml\\'" "\\.yaml\\'"))
+;; PHP
+(use-package php-mode
+  :ensure t
+  :mode
+  ("\\.php\\'"))
+;; SSH config
+(use-package ssh-config-mode
+  :ensure t)
+;; python
+(use-package python-mode
+  :ensure t
+  :mode
+  ("\\.py\\'")
+  :init
+  ;; (defun ms:get-user-from-ssh-config (host)
+  ;;   "Get the User for HOST from ~/.ssh/config ."
+  ;;   (with-temp-buffer
+  ;;     (insert-file-contents (expand-file-name "~/.ssh/config"))
+  ;;     (ssh-config-mode)
+  ;;     (let ((alist (ssh-config-parse-buffer)))
+  ;;       (cdr (assoc 'User (assoc host alist))))))
+  (defun ms:get-user-from-ssh-config (host)
+    "Get the User for HOST from ~/.ssh/config safely."
+    (with-temp-buffer
+      (insert-file-contents (expand-file-name "~/.ssh/config"))
+      (let ((case-fold-search t)
+            (user nil)
+            (blocks '()))
+        ;; Separate file as Host unit
+        (goto-char (point-min))
+        (while (re-search-forward "^Host[ \t]+\\(.+\\)" nil t)
+          (let ((start (line-beginning-position))
+                (hosts (split-string (match-string 1)))
+                (end (if (re-search-forward "^Host[ \t]+" nil t)
+                         (line-beginning-position)
+                       (point-max))))
+            (push (list :hosts hosts :start start :end end) blocks)
+            (goto-char end)))
+        ;; Search each block
+        (dolist (block blocks)
+          (when (member host (plist-get block :hosts))
+            (goto-char (plist-get block :start))
+            (while (re-search-forward "^[ \t]*\\([^ \t\n]+\\)[ \t]+\\(.+\\)" (plist-get block :end) t)
+              (when (string= (match-string 1) "User")
+                (setq user (string-trim (match-string 2)))))))
+        user)))
+  (defun ms:guess-user-from-buffer ()
+    "Guess the username from the buffer's TRAMP file path."
+    (let ((file buffer-file-name))
+      (cond
+       ;; Local path with /home/USER
+       ((and file (string-match "/home/\\([^/]+\\)/" file))
+        (match-string 1 file))
+       ;; Remote TRAMP path
+       ((and file (file-remote-p file))
+        (let ((host (tramp-file-name-host (tramp-dissect-file-name file))))
+          (ms:get-user-from-ssh-config host))))))
+  (defun ms:find-venv-path ()
+    "Find venv path"
+    (let* ((base-paths '(".anaconda"
+                         ".anaconda3"
+                         ".miniconda"
+                         ".miniconda3"
+                         ".miniforge3"
+                         ".mambaforge"
+                         "anaconda3"
+                         "miniconda3"
+                         "miniforge3"
+                         "mambaforge"
+                         "opt/miniconda3"
+                         "/opt/miniconda3"
+                         "/usr/bin/anaconda3"
+                         "/usr/local/anaconda3"
+                         "/usr/local/miniconda3"
+                         "/usr/local/Caskroom/miniconda/base"
+                         ".conda"))
+           (remote (file-remote-p default-directory))
+           (remote-user (when remote
+                          (or (tramp-file-name-user
+                               (tramp-dissect-file-name default-directory))
+                              (ms:guess-user-from-buffer))))
+           (candidates (mapcar (lambda (path)
+                                 (let ((path-with-envs (format "%s/envs" path)))
+                                   (if (string-prefix-p "/" path-with-envs)
+                                       path-with-envs
+                                     (if remote-user
+                                         (format "/home/%s/%s" remote-user path-with-envs)
+                                       (expand-file-name (format "~/%s" path-with-envs))))))
+                               base-paths))
+           (venv-path (seq-find (lambda (candidate)
+                                  (let ((venv-path (if remote
+                                                       (format "%s%s" remote candidate)
+                                                     candidate)))
+                                    (file-directory-p venv-path)))
+                                candidates)))
+      (if venv-path
+          venv-path
+        (user-error "Error: No Conda directory found"))))
+  (require 'json)
+  (defun pyright-env ()
+    "Change conda env for pyright"
+    ;; Set pyrightconfig.json based on local or remote Python env for the current buffer
+    (interactive)
+    (let* ((project (eglot--project (eglot-current-server)))
+           (project-root (if project
+                             (project-root project)
+                           default-directory))
+           (config-path (expand-file-name "pyrightconfig.json" project-root))
+           (gitignore-path (expand-file-name ".gitignore" project-root))
+           (remote (file-remote-p default-directory))
+           (venv-path (ms:find-venv-path))
+           (pyright-venv-path (if remote
+                                  (format "%s%s" remote venv-path)
+                                venv-path))
+           (venv-list (directory-files pyright-venv-path nil "^[^.]"))
+           (venv (completing-read "Choose Python environment: " venv-list))
+           (config `(("venvPath" . ,venv-path)
+                     ("venv" . ,venv)))
+           (json-content (let ((json-object-type 'alist)
+                               (json-array-type 'list)
+                               (json-key-type 'string))
+                           (json-encode config))))
+      ;; Write
+      (with-temp-file config-path
+        (insert json-content))
+      (message "Saved pyrightconfig.json with environment: %s (under %s/%s)"
+               venv venv-path venv)
+      ;; Recconect Eglot
+      (eglot-reconnect (eglot-current-server))
+      ;; Add pyrightconfig.json to .gitignore
+      (when (file-writable-p gitignore-path)
+        (with-temp-buffer
+          (when (file-exists-p gitignore-path)
+            (insert-file-contents gitignore-path))
+          (goto-char (point-min))
+          (unless (re-search-forward "^pyrightconfig\\.json$" nil t)
+            (goto-char (point-max))
+            (unless (bolp) (insert "\n"))
+            (insert "pyrightconfig.json\n")
+            (write-region (point-min) (point-max) gitignore-path)
+            (message "Added pyrightconfig.json to %s" gitignore-path)))))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package tramp
+  :init
+  (defun ms:tramp-reconnect ()
+    "Reconect tramp access"
+    (interactive)
+    (when (file-remote-p default-directory)
+      (let ((current-file (buffer-file-name)))
+        (when current-file
+          (message "Reconnectiong to remote file: %s" current-file)
+          (find-alternate-file current-file)))))
   :custom
   (tramp-default-method "ssh")
   (tramp-verbose 1)
@@ -482,50 +553,41 @@
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
   :hook (tramp-cleanup-hook . (lambda ()
                                 (message
-                                 "Tramp connection lost, trying to reconnect..."))
-                            )
-  )
-
+                                 "Tramp connection lost, trying to reconnect...")
+                                (ms:tramp-reconnect))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ projectile                                                    ;;;
+;;; @ project management                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
-  :ensure t)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ treemacs                                                      ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+  :ensure t
+  :config
+  (projectile-mode))
 (use-package treemacs
   :ensure t
   :defer t
   :bind (:map global-map
               ("C-x t t" . treemacs)
               ("C-x t a" . treemacs-add-and-display-current-project)
-              ("C-x t e" . treemacs-add-and-display-current-project-exclusively)
-              )
-  :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1)))
-  )
-
+              ("C-x t e" . treemacs-add-and-display-current-project-exclusively))
+  :hook (treemacs-mode . (lambda () (display-line-numbers-mode -1))))
 (use-package treemacs-projectile
   :ensure t
-  :after (treemacs projectile))
-
+  :after (treemacs projectile)
+  :config
+  (treemacs-projectile))
 ;; treemacs theme
-(use-package treemacs-all-the-icons
-  :after treemacs
+(use-package treemacs-nerd-icons
+  :after (treemacs nerd-icons)
   :ensure t
   :config
-  (treemacs-load-theme "all-the-icons"))
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ flymake                                                       ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; (add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
-
+  (treemacs-load-theme "nerd-icons"))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
-
+(setopt gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (setopt gc-cons-threshold (* 16 1024 1024))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab mode                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -536,42 +598,41 @@
 (global-set-key (kbd "C-<tab>") 'tab-line-switch-to-next-tab)
 (global-set-key (kbd "C-S-<iso-lefttab>") 'tab-line-switch-to-prev-tab)
 (global-set-key (kbd "C-x t k") 'tab-line-close-tab)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tool bar mode                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (tool-bar-mode -1) ;; disable tool bar
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto reload                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (global-auto-revert-mode t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ auto paring                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (electric-pair-mode t)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ truncate-lines                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook (lambda () (setq truncate-lines t)))
-
+(add-hook 'prog-mode-hook (lambda () (setopt truncate-lines t)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'undo-tree)
-  (package-refresh-contents)
-  (package-install 'undo-tree))
-(require 'undo-tree)
-(global-undo-tree-mode t)
-;; save history file in specified directory
-(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
-;; if the directory no exist, then make it
-(unless (file-exists-p "~/.emacs.d/undo-tree-history/")
-  (make-directory "~/.emacs.d/undo-tree-history/" t))
-; Undo C-/, Redo C-S-/
-
+(use-package undo-tree
+  :ensure t
+  :init
+  ;; if the directory no exist, then make it
+  (unless (file-exists-p "~/.emacs.d/undo-tree-history/")
+    (make-directory "~/.emacs.d/undo-tree-history/" t))
+  :custom
+  ;; Enable persistent history
+  (undo-tree-auto-save-history t)
+  ;; save history file in specified directory
+  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+  (undo-tree-limit 1000)
+  :config
+  (global-undo-tree-mode)
+  ;; Undo C-/, Redo C-S-/
+  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ shortcut                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -582,125 +643,73 @@
 ;; (global-set-key (kbd "C-S-<iso-lefttab>") 'previous-buffer)
 
 ;; C-; comment out/in
-(defun one-line-comment ()
-  (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (set-mark (point))
-    (end-of-line)
-    (comment-or-uncomment-region (region-beginning) (region-end))))
-(global-set-key (kbd "C-;") 'one-line-comment)
+;; (defun one-line-comment ()
+;;   (interactive)
+;;   (save-excursion
+;;     (beginning-of-line)
+;;     (set-mark (point))
+;;     (end-of-line)
+;;     (comment-or-uncomment-region (region-beginning) (region-end))))
+;; (global-set-key (kbd "C-;") 'one-line-comment)
 
-;; 
-(defun custom-move-beginning-of-line ()
+(defun ms:move-beginning-of-line ()
+  "Toggle beginning of line and indent."
   (interactive)
-  (if (= (point) (line-beginning-position))
-      (back-to-indentation)
-  (when (<= (point)
-	    (progn (back-to-indentation)
-                   (point)))
-    (move-beginning-of-line 1))))
-(global-set-key (kbd "C-a") 'custom-move-beginning-of-line)
+  (let ((origin (point)))
+    (back-to-indentation)
+    (when (= origin (point))
+      (move-beginning-of-line 1))))
+(global-set-key (kbd "C-a") 'ms:move-beginning-of-line)
 
 ;; code jump history
 ;; M-,
 (global-set-key (kbd "<mouse-8>") 'xref-go-back)
 ;; M-C-,
 (global-set-key (kbd "<mouse-9>") 'xref-go-forward)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq-default indent-tabs-mode nil)
-
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ edit mode                                                     ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; markdown
-(unless (package-installed-p 'markdown-mode)
-  (package-refresh-contents)
-  (package-install 'markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
-
-;; cmake
-(use-package cmake-mode
-  :ensure t
-  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
-         ("\\.cmake\\'" . cmake-mode))
-  )
-
-;; racket
-(use-package racket-mode
-  :ensure t
-  )
-
-;; yaml
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.yml\\'" "\\.yaml\\'")
-  )
-
-;; python
-(setq python-indent-offset 4)
-(use-package conda
-  :ensure t
-  :init
-  (setq conda-anaconda-home "~/miniforge3")
-  (setq conda-env-home-directory "~/miniforge3")
-  (conda-env-initialize-interactive-shells)
-  (conda-env-initialize-eshell)
-  (conda-mode-line-setup)
-  :hook
-  ((conda-postactivate . (lambda ()
-                           (eglot-reconnect
-                            (eglot-current-server))))
-   (conda-postdeactivate . (lambda ()
-                           (eglot-reconnect
-                            (eglot-current-server)))))
-  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ multiple-cursors                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'multiple-cursors)
-  (package-refresh-contents)
-  (package-install 'multiple-cursors))
-(require 'multiple-cursors)
-;; C-u C-M-SPC
-(global-set-key (kbd "C-S-c C-S-c") 'mc/mark-all-dwim)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/unmark-next-like-this)
-
+(use-package multiple-cursors
+  :ensure t
+  :bind
+  ;; C-u C-M-SPC
+  (("C-S-c C-S-c" . mc/mark-all-dwim)
+   ("C->" . mc/mark-next-like-this)
+   ("C-<" . mc/unmark-next-like-this)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(unless (package-installed-p 'mozc)
-  (package-refresh-contents)
-  (package-install 'mozc))
-(require 'mozc)
-(setq default-input-method "japanese-mozc")
-;; 半角/全角キーで切り替え
-(global-set-key [zenkaku-hankaku] 'toggle-input-method)
-;; 変換キーでmozcオン
-(defun ime-on ()
-  (interactive)
-  (unless current-input-method
-    (toggle-input-method)))
-(global-set-key [henkan] 'ime-on)
-;; 無変換キーでmozcオフ
-
-(defun ime-off ()
-  (interactive)
-  (when current-input-method
-    (toggle-input-method)))
-(global-set-key [muhenkan] 'ime-off)
-(add-hook 'mozc-mode-hook
-	  (lambda ()
- 	    (define-key mozc-mode-map [muhenkan] 'ime-off)))
-;; フォント
-(set-fontset-font t 'japanese-jisx0208 "Migu 1M")
-
+(use-package mozc
+  :ensure t
+  :init
+  (defun ime-on ()
+    (interactive)
+    (unless current-input-method
+      (toggle-input-method)))
+  (defun ime-off ()
+    (interactive)
+    (when current-input-method
+      (toggle-input-method)))
+  :custom
+  (default-input-method "japanese-mozc")
+  :bind
+  (;; 半角/全角キーで切り替え
+   ([zenkaku-hankaku] . toggle-input-method)
+   ;; 変換キーでmozcオン
+   ([henkan] . ime-on)
+   ;; 無変換キーでmozcオフ
+   ([muhenkan] . ime-off))
+  :config
+  ;; フォント
+  (set-fontset-font t 'japanese-jisx0208 "Migu 1M")
+  :hook
+  ;; 無変換キーでmozcオフ
+  (mozc-mode . (lambda ()
+ 	         (define-key mozc-mode-map [muhenkan] 'ime-off))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ which key                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -708,15 +717,14 @@
   :ensure t
   :diminish which-key-mode
   :hook (after-init . which-key-mode))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom file load                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-file "~/.emacs.d/custom.el")
 (load custom-file 'noerror 'nomessage)
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom theme                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setq custom-theme-file "~/.emacs.d/themes/custom-theme.el")
 (load custom-theme-file 'noerror 'nomessage)
+;;; init.el ends here
