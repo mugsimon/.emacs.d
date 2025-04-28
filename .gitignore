@@ -13,3 +13,7 @@ custom.el
 history
 tree-sitter/
 company-statistics-cache.el
+places
+projectile-bookmarks.eld
+tramp
+var/
