@@ -164,13 +164,21 @@
   :ensure t
   :config
   (rainbow-mode nil)
-  (defun rainbow-mode-hex-only ()
-    "Customize rainbow-mode to only highlight hex color codes."
+  (defvar rainbow-mode-hex-only-p nil
+    "If non-nil, rainbow-mode will hightlight only hexadecimal color codes.")
+  (defun rainbow-mode-toggle-hex-only ()
+    "Toggle rainbow-mode between highlighting only hexadecimal colors and all colors."
     (interactive)
-    (setopt rainbow-html-colors nil) ;; HTMLの色名を無効化
-    (setopt rainbow-x-colors nil)    ;; CSS色名を無効化
-    (setopt rainbow-hexadecimal-colors t) ;; 16進数カラーコードのみ
-    (rainbow-mode t))
+    (if rainbow-mode-hex-only-p
+	(progn (setopt rainbow-html-colors t) ;; enable HTML color
+	       (setopt rainbow-x-colors t)    ;; enable CSS color
+	       (message "Rainbow mode: All colors highlighted"))
+      (progn (setopt rainbow-html-colors nil) ;; enable HTML color
+	     (setopt rainbow-x-colors nil)    ;; enable CSS color
+	     (setopt rainbow-hexadecimal-colors t)
+	     (message "Rainbow mode: Highlighting only hexadecimal colors")))
+    (setopt rainbow-mode-hex-only-p (not rainbow-mode-hex-only-p))
+    (rainbow-mode t)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ highlight symbol                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
