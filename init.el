@@ -19,16 +19,17 @@
 ;;; @ fonts setting                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package nerd-icons
-  :ensure t)
-(defvar icons-fonts-setup-done
-  (expand-file-name "~/.emacs.d/.fonts-setup-done"))
-(unless (file-exists-p icons-fonts-setup-done)
-  ;; Run nerd-icons setup
-  (nerd-icons-install-fonts t)
-  ;; Update font cache
-  (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
-  ;; Create the flag file
-  (write-region "" nil icons-fonts-setup-done))
+  :ensure t
+  :init
+  (defvar icons-fonts-setup-done
+    (expand-file-name "~/.emacs.d/.fonts-setup-done"))
+  (unless (file-exists-p icons-fonts-setup-done)
+    ;; Run nerd-icons setup
+    (nerd-icons-install-fonts t)
+    ;; Update font cache
+    (start-process-shell-command "fc-cache" "*Messages*" "fc-cache -f -v")
+    ;; Create the flag file
+    (write-region "" nil icons-fonts-setup-done)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -135,13 +136,13 @@
 
 (use-package marginalia
   :ensure t
-  :init
+  :config
   (marginalia-mode))
 
 (use-package nerd-icons-completion
   :ensure t
   :after (marginalia nerd-icons)
-  :init
+  :config
   (nerd-icons-completion-mode))
 
 ;; Show the depth of minibuffer recursion when using nested commands.
@@ -161,7 +162,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package rainbow-mode
   :ensure t
-  :init
+  :config
   (rainbow-mode nil)
   (defun rainbow-mode-mini ()
     "Customize rainbow-mode to only highlight hex color codes."
@@ -252,8 +253,7 @@
   (eglot-ignored-server-capabilities
    ;; disable eglot symbol highlight to avoid conflict with highlight-symbol
    '(:documentHighlightProvider))
-  :config
-  (setq read-process-output-max (* 4 1024 1024)) ;; 4MB
+  (read-process-output-max (* 4 1024 1024)) ;; 4MB
   :hook
   (((python-mode python-ts-mode) . eglot-ensure)
    ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
@@ -266,7 +266,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package corfu
   :ensure t
-  :init
+  :config
   (global-corfu-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
@@ -294,8 +294,8 @@
 (use-package corfu-prescient
   :ensure t
   :after corfu
-  :config
-  (setq completion-category-overrides '((file (styles basic))))
+  :custom
+  (completion-category-overrides '((file (styles basic))))
   (corfu-prescient-mode))
 (use-package nerd-icons-corfu
   :ensure t
@@ -313,16 +313,16 @@
 (use-package treesit
   :hook (after-change-major-mode . ms:treesit-setup)
   :init
-  (setq treesit-language-source-alist
-        '((scheme     "https://github.com/6cdh/tree-sitter-scheme")
-          (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-          (python     "https://github.com/tree-sitter/tree-sitter-python")
-          (c          "https://github.com/tree-sitter/tree-sitter-c")
-          (c++        "https://github.com/tree-sitter/tree-sitter-cpp")
-          (js         "https://github.com/tree-sitter/node-tree-sitter")
-          (css        "https://github.com/tree-sitter/tree-sitter-css")
-          (php        "https://github.com/tree-sitter/tree-sitter-php")
-          (json       "https://github.com/tree-sitter/tree-sitter-json")))
+  (setopt treesit-language-source-alist
+          '((scheme     "https://github.com/6cdh/tree-sitter-scheme")
+            (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
+            (python     "https://github.com/tree-sitter/tree-sitter-python")
+            (c          "https://github.com/tree-sitter/tree-sitter-c")
+            (c++        "https://github.com/tree-sitter/tree-sitter-cpp")
+            (js         "https://github.com/tree-sitter/node-tree-sitter")
+            (css        "https://github.com/tree-sitter/tree-sitter-css")
+            (php        "https://github.com/tree-sitter/tree-sitter-php")
+            (json       "https://github.com/tree-sitter/tree-sitter-json")))
   (defun ms:maybe-install-treesit-grammar (lang)
     "If the grammar for current major-mode exists in treesit-language-source-alist, install it if missing."
     (let* ((tree-sitter-dir (expand-file-name "tree-sitter/"
@@ -352,8 +352,8 @@
       (when (string-suffix-p "-ts-mode" mode-name)
         (let ((lang (intern (substring mode-name 0 -8))))
           (ms:maybe-install-treesit-grammar lang)))))
-  :config
-  (setq treesit-font-lock-level 4))
+  :custom
+  (treesit-font-lock-level 4))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -363,12 +363,17 @@
   :mode
   (("\\.markdown\\'" . markdown-mode)
    ("\\.md\\'" . markdown-mode)
-   ("README\\.md\\'" . gfm-mode)))
+   ("README\\.md\\'" . gfm-mode))
+  :custom
+  (markdown-split-window-direction 'right)
+  (markdown-live-preview-delete-export 'delete-on-export)
+  (truncate-lines t))
 ;; cmake
 (use-package cmake-mode
   :ensure t
-  :mode (("CMakeLists\\.txt\\'" . cmake-mode)
-         ("\\.cmake\\'" . cmake-mode)))
+  :mode
+  (("CMakeLists\\.txt\\'" . cmake-mode)
+   ("\\.cmake\\'" . cmake-mode)))
 ;; racket
 (use-package racket-mode
   :ensure t
@@ -377,18 +382,21 @@
 ;; yaml
 (use-package yaml-mode
   :ensure t
-  :mode ("\\.yml\\'" "\\.yaml\\'"))
+  :mode
+  ("\\.yml\\'" "\\.yaml\\'"))
 ;; PHP
 (use-package php-mode
   :ensure t
-  :mode ("\\.php\\'"))
+  :mode
+  ("\\.php\\'"))
 ;; SSH config
 (use-package ssh-config-mode
   :ensure t)
 ;; python
 (use-package python-mode
   :ensure t
-  :mode ("\\.py\\'")
+  :mode
+  ("\\.py\\'")
   :init
   ;; (defun ms:get-user-from-ssh-config (host)
   ;;   "Get the User for HOST from ~/.ssh/config ."
@@ -546,7 +554,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
   :ensure t
-  :init
+  :config
   (projectile-mode))
 (use-package treemacs
   :ensure t
@@ -599,23 +607,24 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ truncate-lines                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook (lambda () (setq truncate-lines t)))
+(add-hook 'prog-mode-hook (lambda () (setopt truncate-lines t)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ undo tree                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package undo-tree
   :ensure t
   :init
-  (global-undo-tree-mode t)
-  :config
-  ;; Enable persistent history
-  (setq undo-tree-auto-save-history t)
-  ;; save history file in specified directory
-  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
   ;; if the directory no exist, then make it
   (unless (file-exists-p "~/.emacs.d/undo-tree-history/")
     (make-directory "~/.emacs.d/undo-tree-history/" t))
-  (setq undo-tree-limit 1000)
+  :custom
+  ;; Enable persistent history
+  (undo-tree-auto-save-history t)
+  ;; save history file in specified directory
+  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+  (undo-tree-limit 1000)
+  :config
+  (global-undo-tree-mode)
   ;; Undo C-/, Redo C-S-/
   )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -637,15 +646,13 @@
 ;;     (comment-or-uncomment-region (region-beginning) (region-end))))
 ;; (global-set-key (kbd "C-;") 'one-line-comment)
 
-;; 
 (defun ms:move-beginning-of-line ()
+  "Toggle beginning of line and indent."
   (interactive)
-  (if (= (point) (line-beginning-position))
-      (back-to-indentation)
-  (when (<= (point)
-	    (progn (back-to-indentation)
-                   (point)))
-    (move-beginning-of-line 1))))
+  (let ((origin (point)))
+    (back-to-indentation)
+    (when (= origin (point))
+      (move-beginning-of-line 1))))
 (global-set-key (kbd "C-a") 'ms:move-beginning-of-line)
 
 ;; code jump history
@@ -667,23 +674,22 @@
   (("C-S-c C-S-c" . mc/mark-all-dwim)
    ("C->" . mc/mark-next-like-this)
    ("C-<" . mc/unmark-next-like-this)))
-
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Japanese input (for Japanese users)                           ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package mozc
   :ensure t
   :init
-  (setq default-input-method "japanese-mozc")
   (defun ime-on ()
     (interactive)
     (unless current-input-method
       (toggle-input-method)))
-  (global-set-key [henkan] 'ime-on)
   (defun ime-off ()
     (interactive)
     (when current-input-method
       (toggle-input-method)))
+  :custom
+  (default-input-method "japanese-mozc")
   :bind
   (;; 半角/全角キーで切り替え
    ([zenkaku-hankaku] . toggle-input-method)
