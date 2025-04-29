@@ -317,47 +317,51 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; M-x treesit-install-language-grammar
 (use-package treesit
-  :hook (after-change-major-mode . ms:treesit-setup)
+  :hook (find-file . ms:treesit-setup)
   :init
+  (defvar treesit-mode-pair-alist
+    '((python-mode . python-ts-mode)
+      (c-mode . c-ts-mode)
+      (c++-mode . c++-ts-mode)
+      (dockerfile-mode . dockerfile-ts-mode)
+      (javascript-mode . js-ts-mode)
+      (css-mode . css-ts-mode)
+      (php-mode . php-ts-mode)
+      (js-json-mode . json-ts-mode)))
   (setopt treesit-language-source-alist
-          '((scheme     "https://github.com/6cdh/tree-sitter-scheme")
-            (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
-            (python     "https://github.com/tree-sitter/tree-sitter-python")
+          '((python     "https://github.com/tree-sitter/tree-sitter-python")
             (c          "https://github.com/tree-sitter/tree-sitter-c")
             (c++        "https://github.com/tree-sitter/tree-sitter-cpp")
+            (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
             (js         "https://github.com/tree-sitter/node-tree-sitter")
             (css        "https://github.com/tree-sitter/tree-sitter-css")
             (php        "https://github.com/tree-sitter/tree-sitter-php")
-            (json       "https://github.com/tree-sitter/tree-sitter-json")))
+            (json       "https://github.com/tree-sitter/tree-sitter-json")
+            (scheme     "https://github.com/6cdh/tree-sitter-scheme")))
+  (dolist (treesit-mode-pair treesit-mode-pair-alist)
+    (let ((lang (intern
+                 (string-remove-suffix "-ts-mode"
+                                       (symbol-name (cdr treesit-mode-pair))))))
+      (when (treesit-language-available-p lang)
+        (add-to-list 'major-mode-remap-alist treesit-mode-pair))))
   (defun ms:maybe-install-treesit-grammar (lang)
     "If the grammar for current major-mode exists in treesit-language-source-alist, install it if missing."
-    (let* ((tree-sitter-dir (expand-file-name "tree-sitter/"
-                                              user-emacs-directory))
-           (lib-file (format "%slibtree-sitter-%s.so"
-                             tree-sitter-dir lang)))
-      (unless (file-exists-p tree-sitter-dir)
-        (make-directory tree-sitter-dir t))
-      (when (and (assoc lang treesit-language-source-alist)
-                 (not (file-exists-p lib-file)))
-        (when (y-or-n-p (format
-                         "Tree-sitter grammar for '%s' not found.  Install? "
-                         lang))
-          (treesit-install-language-grammar lang)))))
+    (when (and (assoc lang treesit-language-source-alist)
+               (y-or-n-p (format
+                          "Treesit grammar for '%s' not found.  Install? "
+                          lang)))
+      (treesit-install-language-grammar lang)))
   (defun ms:treesit-setup ()
     "Set up Tree-sitter grammars and remap major modes"
-    (setq major-mode-remap-alist
-          '((python-mode . python-ts-mode)
-            (c-mode . c-ts-mode)
-            (c++-mode . c++-ts-mode)
-            (dockerfile-mode . dockerfile-ts-mode)
-            (javascript-mode . js-ts-mode)
-            (css-mode . css-ts-mode)
-            (php-mode . php-ts-mode)
-            (js-json-mode . json-ts-mode)))
-    (let ((mode-name (symbol-name major-mode)))
-      (when (string-suffix-p "-ts-mode" mode-name)
-        (let ((lang (intern (substring mode-name 0 -8))))
-          (ms:maybe-install-treesit-grammar lang)))))
+    (let ((treesit-mode-pair (assoc major-mode treesit-mode-pair-alist)))
+      (when treesit-mode-pair
+        (let ((lang (intern
+                     (string-remove-suffix "-ts-mode"
+                                           (symbol-name (cdr treesit-mode-pair))))))
+          (ms:maybe-install-treesit-grammar lang)
+          (when (treesit-language-available-p lang)
+            (add-to-list 'major-mode-remap-alist treesit-mode-pair)
+            (revert-buffer t t))))))
   :custom
   (treesit-font-lock-level 4))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
