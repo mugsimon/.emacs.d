@@ -367,6 +367,20 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ edit mode                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; scheme
+(use-package scheme
+  :hook
+  (scheme-mode . eglot-ensure)
+  (scheme-mode . corfu-mode)
+  :config
+  (with-eval-after-load 'eglot
+    (add-to-list 'exec-path (expand-file-name "~/.guix-profile/bin"))
+    ;; git clone https://codeberg.org/rgherdt/scheme-lsp-server.git
+    ;; cd scheme-lsp-server
+    ;; sudo apt install guix
+    ;; guix package -f guix.scm
+    (add-to-list 'eglot-server-programs
+                 '(scheme-mode . ("guile-lsp-server" "--stdio")))))
 ;; markdown
 (use-package markdown-mode
   :ensure t
