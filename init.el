@@ -558,7 +558,7 @@
                   (if remote
                       (let* ((script-dir (expand-file-name "~/.cache/"))
                              (script-path (expand-file-name "remote-python-version.sh" script-dir)))
-                        (unless (file-exist-p script-dir)
+                        (unless (file-exists-p script-dir)
                           (make-directory script-dir t))
                         (with-temp-file script-path
                           (insert "#!/bin/bash\n\n")
