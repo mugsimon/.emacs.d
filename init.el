@@ -534,7 +534,8 @@
             (unless (bolp) (insert "\n"))
             (insert "pyrightconfig.json\n")
             (write-region (point-min) (point-max) gitignore-path)
-            (message "Added pyrightconfig.json to %s" gitignore-path))))))
+            (message "Added pyrightconfig.json to %s" gitignore-path)))))
+    (ms:update-modeline))
   (defun ms:update-modeline ()
     "Retturn full path to venv from pyrightconfig.json if available."
     (let* ((project (eglot--project (eglot-current-server)))
@@ -565,7 +566,9 @@
                         (set-file-modes script-path #o755)
                         (setopt doom-modeline-env-python-executable script-path))
                     (setopt doom-modeline-env-python-executable python-path))
-                  (revert-buffer t t)))))))))
+                  (revert-buffer t t))))))))
+  :hook
+  ((python-mode python-ts-mode) . ms:update-modeline))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
