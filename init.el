@@ -534,7 +534,38 @@
             (unless (bolp) (insert "\n"))
             (insert "pyrightconfig.json\n")
             (write-region (point-min) (point-max) gitignore-path)
-            (message "Added pyrightconfig.json to %s" gitignore-path)))))))
+            (message "Added pyrightconfig.json to %s" gitignore-path))))))
+  (defun ms:update-modeline ()
+    "Retturn full path to venv from pyrightconfig.json if available."
+    (let* ((project (eglot--project (eglot-current-server)))
+           (project-root (if project
+                             (project-root project)
+                           default-directory))
+           (config-path (expand-file-name "pyrightconfig.json" project-root))
+           (remote (file-remote-p default-directory 'host)))
+      (if (file-exists-p config-path)
+          (with-temp-buffer
+            (insert-file-contents config-path)
+            (let* ((json-object-type 'hash-table)
+                   (json-array-type 'list)
+                   (json-key-type 'string)
+                   (data (json-parse-buffer))
+                   (venv-path (gethash "venvPath" data))
+                   (venv-name (gethash "venv" data)))
+              (when (and venv-path venv-name)
+                (let ((python-path (format "%s/%s/bin/python" venv-path venv-name)))
+                  (if remote
+                      (let ((script-dir (expand-file-name "~/.cache/"))
+                            (script-path (expand-file-name "remote-python-version.sh" script-dir)))
+                        (unless (file-exist-p script-dir)
+                          (make-directory script-dir t))
+                        (with-temp-file script-path
+                          (insert "#!/bin/bash\n\n")
+                          (insert (format "ssh %s \"%s --version\"\n" remote python-path)))
+                        (set-file-modes script-path #o755)
+                        (setopt doom-modeline-env-python-executable script-path))
+                    (setopt doom-modeline-env-python-executable python-path))
+                  (revert-buffer t t)))))))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
