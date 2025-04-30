@@ -556,8 +556,8 @@
               (when (and venv-path venv-name)
                 (let ((python-path (format "%s/%s/bin/python" venv-path venv-name)))
                   (if remote
-                      (let ((script-dir (expand-file-name "~/.cache/"))
-                            (script-path (expand-file-name "remote-python-version.sh" script-dir)))
+                      (let* ((script-dir (expand-file-name "~/.cache/"))
+                             (script-path (expand-file-name "remote-python-version.sh" script-dir)))
                         (unless (file-exist-p script-dir)
                           (make-directory script-dir t))
                         (with-temp-file script-path
