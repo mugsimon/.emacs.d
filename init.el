@@ -114,7 +114,6 @@
 (setopt redisplay-dont-pause t)
 
 ;; mouse scroll
-(setopt mouse-wheel-scroll-amount '(1))
 (setopt mouse-wheel-progressive-speed t)
 
 ;; horizontal scroll margin
