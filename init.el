@@ -408,8 +408,7 @@
   :mode
   ("\\.py\\'")
   :hook
-  ((python-mode . ms:update-doom-modeline)
-   (python-ts-mode . ms:update-doom-modeline))
+  ((eglot-managed-mode . ms:update-doom-modeline-python-version))
   :init
   ;; (defun ms:get-user-from-ssh-config (host)
   ;;   "Get the User for HOST from ~/.ssh/config ."
@@ -539,38 +538,39 @@
             (write-region (point-min) (point-max) gitignore-path)
             (message "Added pyrightconfig.json to %s" gitignore-path))))
       ;; Update doom-modeline
-      (ms:update-doom-modeline)))
-  (defun ms:update-doom-modeline ()
+      (ms:update-doom-modeline-python-version)
+      (revert-buffer t t)))
+  (defun ms:update-doom-modeline-python-version ()
     "Retturn full path to venv from pyrightconfig.json if available."
-    (let* ((project (eglot--project (eglot-current-server)))
-           (project-root (if project
-                             (project-root project)
-                           default-directory))
-           (config-path (expand-file-name "pyrightconfig.json" project-root))
-           (remote (file-remote-p default-directory 'host)))
-      (if (file-exists-p config-path)
-          (with-temp-buffer
-            (insert-file-contents config-path)
-            (let* ((json-object-type 'hash-table)
-                   (json-array-type 'list)
-                   (json-key-type 'string)
-                   (data (json-parse-buffer))
-                   (venv-path (gethash "venvPath" data))
-                   (venv-name (gethash "venv" data)))
-              (when (and venv-path venv-name)
-                (let ((python-path (format "%s/%s/bin/python" venv-path venv-name)))
-                  (if remote
-                      (let* ((script-dir (expand-file-name "~/.cache/"))
-                             (script-path (expand-file-name "remote-python-version.sh" script-dir)))
-                        (unless (file-exists-p script-dir)
-                          (make-directory script-dir t))
-                        (with-temp-file script-path
-                          (insert "#!/bin/bash\n\n")
-                          (insert (format "ssh %s \"%s --version\"\n" remote python-path)))
-                        (set-file-modes script-path #o755)
-                        (setopt doom-modeline-env-python-executable script-path))
-                    (setopt doom-modeline-env-python-executable python-path))
-                  (revert-buffer t t)))))))))
+    (when (memq major-mode '(python-mode python-ts-mode))
+      (let* ((project (eglot--project (eglot-current-server)))
+             (project-root (if project
+                               (project-root project)
+                             default-directory))
+             (config-path (expand-file-name "pyrightconfig.json" project-root))
+             (remote (file-remote-p default-directory 'host)))
+        (if (file-exists-p config-path)
+            (with-temp-buffer
+              (insert-file-contents config-path)
+              (let* ((json-object-type 'hash-table)
+                     (json-array-type 'list)
+                     (json-key-type 'string)
+                     (data (json-parse-buffer))
+                     (venv-path (gethash "venvPath" data))
+                     (venv-name (gethash "venv" data)))
+                (when (and venv-path venv-name)
+                  (let ((python-path (format "%s/%s/bin/python" venv-path venv-name)))
+                    (if remote
+                        (let* ((script-dir (expand-file-name "~/.cache/"))
+                               (script-path (expand-file-name "remote-python-version.sh" script-dir)))
+                          (unless (file-exists-p script-dir)
+                            (make-directory script-dir t))
+                          (with-temp-file script-path
+                            (insert "#!/bin/bash\n\n")
+                            (insert (format "ssh %s \"%s --version\"\n" remote python-path)))
+                          (set-file-modes script-path #o755)
+                          (setopt doom-modeline-env-python-executable script-path))
+                      (setopt doom-modeline-env-python-executable python-path)))))))))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
