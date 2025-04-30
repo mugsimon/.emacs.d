@@ -407,6 +407,9 @@
   :ensure t
   :mode
   ("\\.py\\'")
+  :hook
+  ((python-mode . ms:update-doom-modeline)
+   (python-ts-mode . ms:update-doom-modeline))
   :init
   ;; (defun ms:get-user-from-ssh-config (host)
   ;;   "Get the User for HOST from ~/.ssh/config ."
