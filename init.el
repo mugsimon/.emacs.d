@@ -534,10 +534,11 @@
             (unless (bolp) (insert "\n"))
             (insert "pyrightconfig.json\n")
             (write-region (point-min) (point-max) gitignore-path)
-            (message "Added pyrightconfig.json to %s" gitignore-path))))))
-  (defun ms:update-modeline ()
+            (message "Added pyrightconfig.json to %s" gitignore-path))))
+      ;; Update doom-modeline
+      (ms:update-doom-modeline)))
+  (defun ms:update-doom-modeline ()
     "Retturn full path to venv from pyrightconfig.json if available."
-    (interactive)
     (let* ((project (eglot--project (eglot-current-server)))
            (project-root (if project
                              (project-root project)
