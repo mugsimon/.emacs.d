@@ -243,14 +243,6 @@
                ;; npm i -g vscode-langservers-extracted
                '((html-mode html-ts-mode) . ("vscode-html-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
-               ;; git clone https://codeberg.org/rgherdt/scheme-lsp-server.git
-               ;; cd scheme-lsp-server
-               ;; sudo apt install guix
-               ;; guix package -f guix.scm
-               ;; GUIX_PROFILE="/home/simon/.guix-profile" # write this line to .bashrc
-               ;; source "$GUIX_PROFILE/etc/profile" # write this line to .bashrc
-               '(scheme-mode . ("guile-lsp-server")))
-  (add-to-list 'eglot-server-programs
                ;; sudo snap install racket
                ;; raco pkg install racket-langserver
                '(racket-mode . ("racket" "-l" "racket-langserver")))
@@ -262,7 +254,6 @@
   :hook
   (((python-mode python-ts-mode) . eglot-ensure)
    ((c-mode c++-mode c-ts-mode c++-ts-mode) . eglot-ensure)
-   (scheme-mode . eglot-ensure)
    (racket-mode . eglot-ensure)
    ((dockerfile-mode dockerfile-ts-mode) . eglot-ensure)
    ((html-mode html-ts-mode) . eglot-ensure)))
@@ -271,10 +262,13 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package corfu
   :ensure t
-  :config
+  :hook
+  (eglot-managed-mode . global-corfu-mode)
+  :init
   (global-corfu-mode)
   (corfu-history-mode)
   (corfu-popupinfo-mode)
+  :config
   (defun ms:corfu-expand ()
     (interactive)
     (unless (corfu-expand)
@@ -370,7 +364,6 @@
 (use-package scheme
   :hook
   (scheme-mode . eglot-ensure)
-  (scheme-mode . corfu-mode)
   :config
   (with-eval-after-load 'eglot
     (add-to-list 'exec-path (expand-file-name "~/.guix-profile/bin"))
