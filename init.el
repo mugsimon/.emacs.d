@@ -564,24 +564,19 @@
                    (venv-name (gethash "venv" data)))
               (when (and venv-path venv-name)
                 (let* ((python-path (format "%s/%s/bin/python" venv-path venv-name))
-                       (python-version
-                        (string-trim
-                         (shell-command-to-string
-                          (if remote
-                              (format "ssh %s '%s --version'" remote python-path)
-                            (format "%s --version" python-path))))))
-                  (unless (string-empty-p python-version)
-                    (let* ((version (doom-modeline-env--python-parse python-version))
-                           (version-env (format "\"%s(%s)\"" version venv-name))
-                           (script-dir (expand-file-name "~/.cache/"))
-                           (script-path (expand-file-name "modeline-python-version.sh" script-dir)))
-                      (unless (file-exists-p script-dir)
-                        (make-directory script-dir t))
-                      (with-temp-file script-path
-                        (insert "#!/bin/bash\n\n")
-                        (insert (format "echo %s\n" version-env)))
-                      (set-file-modes script-path #o755)
-                      (setopt doom-modeline-env-python-executable script-path)))))))
+                       (python-version-command
+                        (if remote
+                            (format "ssh %s %s --version | sed 's/$/(%s)/'" remote python-path venv-name)
+                          (format "%s --version | sed 's/$/(%s)/'" python-path venv-name)))
+                       (script-dir (expand-file-name "~/.cache/"))
+                       (script-path (expand-file-name "modeline-python-version.sh" script-dir)))
+                  (unless (file-exists-p script-dir)
+                    (make-directory script-dir t))
+                  (with-temp-file script-path
+                    (insert "#!/bin/bash\n\n")
+                    (insert (format "%s\n" python-version-command)))
+                  (set-file-modes script-path #o755)
+                  (setopt doom-modeline-env-python-executable script-path)))))
         (setopt doom-modeline-env-python-executable nil)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
