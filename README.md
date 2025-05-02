@@ -1,4 +1,4 @@
-# Emacs Configuration by mugsimon
+# Emacs Configuration By Mugsimon
 This repository contains my personal Emacs configuration, tailored to enhance productivity, improve workflow, and support various development tasks.
 
 ## Customization ##

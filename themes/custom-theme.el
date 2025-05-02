@@ -12,3 +12,7 @@
 ;; (custom-set-faces
 ;;    '(highlight-symbol-face
 ;;      ((t (:background "#414141" :weight bold)))))
+;; modeline scale
+;; (custom-set-faces
+;;  '(mode-line ((t (:height 0.9))))
+;;  '(mode-line-inactive ((t (:height 0.9)))))

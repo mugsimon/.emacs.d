@@ -547,37 +547,42 @@
       ;; Update doom-modeline
       (ms:update-doom-modeline-python-version)
       (revert-buffer t t)))
-  (require 'project)
   (defun ms:update-doom-modeline-python-version ()
-    "Retturn full path to venv from pyrightconfig.json if available."
-    (let* ((project (project-current))
-           (project-root (if project
-                             (project-root project)
-                           default-directory))
+    "Set venv from pyrightconfig.json if available."
+    (let* ((project-root (or (doom-modeline-project-root)
+                             default-directory))
            (config-path (expand-file-name "pyrightconfig.json" project-root))
            (remote (file-remote-p default-directory 'host)))
-      (when (file-exists-p config-path)
-        (with-temp-buffer
-          (insert-file-contents config-path)
-          (let* ((json-object-type 'hash-table)
-                 (json-array-type 'list)
-                 (json-key-type 'string)
-                 (data (json-parse-buffer))
-                 (venv-path (gethash "venvPath" data))
-                 (venv-name (gethash "venv" data)))
-            (when (and venv-path venv-name)
-              (let ((python-path (format "%s/%s/bin/python" venv-path venv-name)))
-                (if remote
-                    (let* ((script-dir (expand-file-name "~/.cache/"))
-                           (script-path (expand-file-name "remote-python-version.sh" script-dir)))
+      (if (file-exists-p config-path)
+          (with-temp-buffer
+            (insert-file-contents config-path)
+            (let* ((json-object-type 'hash-table)
+                   (json-array-type 'list)
+                   (json-key-type 'string)
+                   (data (json-parse-buffer))
+                   (venv-path (gethash "venvPath" data))
+                   (venv-name (gethash "venv" data)))
+              (when (and venv-path venv-name)
+                (let* ((python-path (format "%s/%s/bin/python" venv-path venv-name))
+                       (python-version
+                        (string-trim
+                         (shell-command-to-string
+                          (if remote
+                              (format "ssh %s '%s --version'" remote python-path)
+                            (format "%s --version" python-path))))))
+                  (unless (string-empty-p python-version)
+                    (let* ((version (doom-modeline-env--python-parse python-version))
+                           (version-env (format "\"%s(%s)\"" version venv-name))
+                           (script-dir (expand-file-name "~/.cache/"))
+                           (script-path (expand-file-name "modeline-python-version.sh" script-dir)))
                       (unless (file-exists-p script-dir)
                         (make-directory script-dir t))
                       (with-temp-file script-path
                         (insert "#!/bin/bash\n\n")
-                        (insert (format "ssh %s \"%s --version\"\n" remote python-path)))
+                        (insert (format "echo %s\n" version-env)))
                       (set-file-modes script-path #o755)
-                      (setopt doom-modeline-env-python-executable script-path))
-                  (setopt doom-modeline-env-python-executable python-path))))))))))
+                      (setopt doom-modeline-env-python-executable script-path)))))))
+        (setopt doom-modeline-env-python-executable nil)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
