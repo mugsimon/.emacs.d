@@ -46,6 +46,10 @@
      ;; highlight-symbol
      `(highlight-symbol-face
        ((,class (:background ,macos1 :weight bold))))
+     ;; tab-line
+     `(tab-line-tab-current ((,class (:background ,bg :foreground ,fg :weight bold))))
+     `(tab-line-tab-inactive ((,class (:background ,macos0 :foreground ,fg-other))))
+     `(tab-line-tab-modified ((,class (:foreground ,darkblue :slant italic))))
      )
     )
   )

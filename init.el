@@ -20,9 +20,10 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package nerd-icons
   :ensure t
+  :commands (nerd-icons-install-fonts)
   :init
   (defvar icons-fonts-setup-done
-    (expand-file-name "~/.emacs.d/.fonts-setup-done"))
+    (expand-file-name ".fonts-setup-done" user-emacs-directory))
   (unless (file-exists-p icons-fonts-setup-done)
     ;; Run nerd-icons setup
     (nerd-icons-install-fonts t)
@@ -33,7 +34,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq inhibit-startup-message t)
+(setopt inhibit-startup-message t)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - mode line                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -63,8 +64,11 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - line number                                          ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setq display-line-numbers-width-start t) ;; Disable dynamic width adjustment
+(use-package display-line-numbers
+  :hook
+  (prog-mode . display-line-numbers-mode)
+  :custom
+  (display-line-numbers-width-start t))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -94,11 +98,13 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ session                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; save desktop session file to .emacs.d
+(setopt desktop-dirname (expand-file-name "desktop" user-emacs-directory))
+(setopt desktop-path (list desktop-dirname))
+(unless (file-exists-p desktop-dirname)
+  (make-directory desktop-dirname t))
 ;; save desktop session
 (desktop-save-mode)
-;; save desktop session file to .emacs.d
-(setq desktop-dirname "~/.emacs.d/desktop/"
-      desktop-path (list desktop-dirname))
 ;; cursor memory
 (save-place-mode)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -126,26 +132,28 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(fido-vertical-mode t)
+(fido-vertical-mode)
 
 ;; Enable a persistent minibuffer history
-(savehist-mode 1)
+(savehist-mode)
 (setopt savehist-additional-variables '(search-ring
                                       regexp-search-ring))
 
 (use-package marginalia
   :ensure t
+  :commands (marginalia-mode)
   :config
   (marginalia-mode))
 
 (use-package nerd-icons-completion
   :ensure t
   :after (marginalia nerd-icons)
+  :commands (nerd-icons-completion-mode)
   :config
   (nerd-icons-completion-mode))
 
 ;; Show the depth of minibuffer recursion when using nested commands.
-(minibuffer-depth-indicate-mode 1)
+(minibuffer-depth-indicate-mode)
 
 (use-package orderless
   :ensure t
@@ -161,6 +169,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package rainbow-mode
   :ensure t
+  :commands (rainbow-mode)
   :config
   (rainbow-mode nil)
   (defvar rainbow-mode-hex-only-p nil
@@ -264,6 +273,7 @@
   :ensure t
   :hook
   (eglot-managed-mode . global-corfu-mode)
+  :commands (global-corfu-mode corfu-history-mode corfu-popupinfo-mode)
   :init
   (global-corfu-mode)
   (corfu-history-mode)
@@ -286,6 +296,7 @@
         ("<backtab>" . corfu-reset)))
 (use-package prescient
   :ensure t
+  :commands (prescient-persist-mode)
   :custom
   (completion-category-overrides '((file (styles basic))))
   :config
@@ -311,6 +322,7 @@
 ;; M-x treesit-install-language-grammar
 (use-package treesit
   :hook (find-file . ms:treesit-setup)
+  :functions (ms:maybe-install-treesit-grammar ms:treesit-setup)
   :init
   (defvar treesit-mode-pair-alist
     '((python-mode . python-ts-mode)
@@ -417,6 +429,11 @@
   :hook
   ((python-mode . ms:update-doom-modeline-python-version)
    (python-ts-mode . ms:update-doom-modeline-python-version))
+  :functions
+  (ms:get-user-from-ssh-config
+   ms:guess-user-from-buffer
+   ms:find-venv-path
+   pyright-env)
   :init
   ;; (defun ms:get-user-from-ssh-config (host)
   ;;   "Get the User for HOST from ~/.ssh/config ."
@@ -548,10 +565,13 @@
       ;; Update doom-modeline
       (ms:update-doom-modeline-python-version)
       (revert-buffer t t)))
+  (require 'project)
   (defun ms:update-doom-modeline-python-version ()
     "Set venv from pyrightconfig.json if available."
-    (let* ((project-root (or (doom-modeline-project-root)
-                             default-directory))
+    (let* ((project (project-current))
+           (project-root (if project
+                             (project-root project)
+                           default-directory))
            (config-path (expand-file-name "pyrightconfig.json" project-root))
            (remote (file-remote-p default-directory 'host)))
       (if (file-exists-p config-path)
@@ -569,8 +589,11 @@
                         (if remote
                             (format "ssh %s %s --version | sed 's/$/(%s)/'" remote python-path venv-name)
                           (format "%s --version | sed 's/$/(%s)/'" python-path venv-name)))
-                       (script-dir (expand-file-name "~/.cache/"))
-                       (script-path (expand-file-name "modeline-python-version.sh" script-dir)))
+                       (script-dir (expand-file-name ".cache" user-emacs-directory))
+                       (script-path (expand-file-name (format "modeline-python-version-%s-%s.sh"
+                                                              (or remote "local")
+                                                              venv-name)
+                                                      script-dir)))
                   (unless (file-exists-p script-dir)
                     (make-directory script-dir t))
                   (with-temp-file script-path
@@ -583,28 +606,28 @@
 ;;; @ tramp                                                         ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package tramp
-  :init
-  (defun ms:tramp-reconnect ()
-    "Reconect tramp access"
-    (interactive)
-    (when (file-remote-p default-directory)
-      (let ((current-file (buffer-file-name)))
-        (when current-file
-          (message "Reconnecting to remote file: %s" current-file)
-          (find-alternate-file current-file)))))
-  :functions (ms:tramp-reconnect)
+  ;; :functions (ms:tramp-reconnect)
+  ;; :init
+  ;; (defun ms:tramp-reconnect ()
+  ;;   "Reconect tramp access"
+  ;;   (interactive)
+  ;;   (when (file-remote-p default-directory)
+  ;;     (let ((current-file (buffer-file-name)))
+  ;;       (when current-file
+  ;;         (message "Reconnecting to remote file: %s" current-file)
+  ;;         (find-alternate-file current-file)))))
   :custom
   (tramp-default-method "ssh")
   (tramp-verbose 1)
   (tramp-auto-save-directory "/tmp")
   (tramp-connection-timeout 30)
   :config
-  (with-eval-after-load 'tramp
-    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
-  :hook (tramp-cleanup-hook . (lambda ()
-                                (message
-                                 "Tramp connection lost, trying to reconnect...")
-                                (ms:tramp-reconnect))))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  ;; :hook (tramp-cleanup-hook . (lambda ()
+  ;;                               (message
+  ;;                                "Tramp connection lost, trying to reconnect...")
+  ;;                               (ms:tramp-reconnect)))
+  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ project management                                            ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -656,7 +679,7 @@
           (lambda ()
             (setopt gc-cons-threshold (* 16 1024 1024))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ tab mode                                                      ;;;
+;;; @ tab line mode                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (global-tab-line-mode t)
 ;; (tab-bar-mode nil)
@@ -686,15 +709,18 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package undo-tree
   :ensure t
+  :commands (global-undo-tree-mode)
   :init
   ;; if the directory no exist, then make it
-  (unless (file-exists-p "~/.emacs.d/undo-tree-history/")
-    (make-directory "~/.emacs.d/undo-tree-history/" t))
+  (defvar undo-tree-dir
+    (expand-file-name "undo-tree-history" user-emacs-directory))
+  (unless (file-exists-p undo-tree-dir)
+    (make-directory undo-tree-dir t))
   :custom
   ;; Enable persistent history
   (undo-tree-auto-save-history t)
   ;; save history file in specified directory
-  (undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo-tree-history/")))
+  (undo-tree-history-directory-alist '(("." . undo-tree-dir)))
   (undo-tree-limit 1000)
   :config
   (global-undo-tree-mode)
@@ -787,11 +813,11 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom file load                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq custom-file "~/.emacs.d/custom.el")
+(defvar custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror 'nomessage)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom theme                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setq custom-theme-file "~/.emacs.d/themes/custom-theme.el")
+(defvar custom-theme-file (expand-file-name "themes/custom-theme.el" user-emacs-directory))
 (load custom-theme-file 'noerror 'nomessage)
 ;;; init.el ends here
