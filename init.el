@@ -320,7 +320,8 @@
       (javascript-mode . js-ts-mode)
       (css-mode . css-ts-mode)
       (php-mode . php-ts-mode)
-      (js-json-mode . json-ts-mode)))
+      (js-json-mode . json-ts-mode))
+    "Alist mapping classic major modes to Tree-sitter-based modes.")
   (setopt treesit-language-source-alist
           '((python     "https://github.com/tree-sitter/tree-sitter-python")
             (c          "https://github.com/tree-sitter/tree-sitter-c")
@@ -338,7 +339,7 @@
       (when (treesit-language-available-p lang)
         (add-to-list 'major-mode-remap-alist treesit-mode-pair))))
   (defun ms:maybe-install-treesit-grammar (lang)
-    "If the grammar for current major-mode exists in treesit-language-source-alist, install it if missing."
+    "If the grammar for current major-mode exists in treesit-language-source-alist, install it."
     (when (and (assoc lang treesit-language-source-alist)
                (y-or-n-p (format
                           "Treesit grammar for '%s' not found.  Install? "
@@ -354,7 +355,7 @@
           (ms:maybe-install-treesit-grammar lang)
           (when (treesit-language-available-p lang)
             (add-to-list 'major-mode-remap-alist treesit-mode-pair)
-            (revert-buffer t t))))))
+            (funcall (cdr treesit-mode-pair)))))))
   :custom
   (treesit-font-lock-level 4))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -589,7 +590,7 @@
     (when (file-remote-p default-directory)
       (let ((current-file (buffer-file-name)))
         (when current-file
-          (message "Reconnectiong to remote file: %s" current-file)
+          (message "Reconnecting to remote file: %s" current-file)
           (find-alternate-file current-file)))))
   :custom
   (tramp-default-method "ssh")
