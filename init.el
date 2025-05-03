@@ -666,6 +666,9 @@
   (git-gutter:added-sign    "+")
   (git-gutter:deleted-sign  "-")
   :custom-face
+  (git-gutter:modified ((t (:weight bold))))
+  (git-gutter:added    ((t (:weight bold))))
+  (git-gutter:deleted  ((t (:weight bold))))
   ;; (git-gutter:modified ((t (:background "#f1fa8c"))))
   ;; (git-gutter:added    ((t (:background "#50fa7b"))))
   ;; (git-gutter:deleted  ((t (:background "#ff79c6"))))
@@ -720,7 +723,7 @@
   ;; Enable persistent history
   (undo-tree-auto-save-history t)
   ;; save history file in specified directory
-  (undo-tree-history-directory-alist '(("." . undo-tree-dir)))
+  (undo-tree-history-directory-alist `(("." . ,undo-tree-dir)))
   (undo-tree-limit 1000)
   :config
   (global-undo-tree-mode)
@@ -813,11 +816,13 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ custom file load                                              ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(defvar custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file 'noerror 'nomessage)
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;;; @ custom theme                                                  ;;;
-;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(defvar custom-theme-file (expand-file-name "themes/custom-theme.el" user-emacs-directory))
-(load custom-theme-file 'noerror 'nomessage)
-;;; init.el ends here
+(load (expand-file-name "custom.el" user-emacs-directory)
+      'noerror
+      'nomessage)
+;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; ;;; @ custom theme                                                  ;;;
+;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(load (expand-file-name "themes/custom-theme.el" user-emacs-directory)
+      'noerror
+      'nomessage)
+;; ;;; init.el ends here
