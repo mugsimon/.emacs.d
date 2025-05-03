@@ -592,13 +592,15 @@
         (when current-file
           (message "Reconnecting to remote file: %s" current-file)
           (find-alternate-file current-file)))))
+  :functions (ms:tramp-reconnect)
   :custom
   (tramp-default-method "ssh")
   (tramp-verbose 1)
   (tramp-auto-save-directory "/tmp")
   (tramp-connection-timeout 30)
   :config
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  (with-eval-after-load 'tramp
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
   :hook (tramp-cleanup-hook . (lambda ()
                                 (message
                                  "Tramp connection lost, trying to reconnect...")
@@ -608,6 +610,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
   :ensure t
+  :commands (projectile-mode)
   :config
   (projectile-mode))
 (use-package treemacs
@@ -621,12 +624,14 @@
 (use-package treemacs-projectile
   :ensure t
   :after (treemacs projectile)
+  :commands (treemacs-projectile)
   :config
   (treemacs-projectile))
 ;; treemacs theme
 (use-package treemacs-nerd-icons
-  :after (treemacs nerd-icons)
   :ensure t
+  :after (treemacs nerd-icons)
+  :commands (treemacs-load-theme)
   :config
   (treemacs-load-theme "nerd-icons"))
 
