@@ -20,7 +20,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package nerd-icons
   :ensure t
-  :commands (nerd-icons-install-fonts)
   :init
   (defvar icons-fonts-setup-done
     (expand-file-name ".fonts-setup-done" user-emacs-directory))
@@ -141,14 +140,12 @@
 
 (use-package marginalia
   :ensure t
-  :commands (marginalia-mode)
   :config
   (marginalia-mode))
 
 (use-package nerd-icons-completion
   :ensure t
   :after (marginalia nerd-icons)
-  :commands (nerd-icons-completion-mode)
   :config
   (nerd-icons-completion-mode))
 
@@ -169,7 +166,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package rainbow-mode
   :ensure t
-  :commands (rainbow-mode)
   :config
   (rainbow-mode nil)
   (defvar rainbow-mode-hex-only-p nil
@@ -273,7 +269,6 @@
   :ensure t
   :hook
   (eglot-managed-mode . global-corfu-mode)
-  :commands (global-corfu-mode corfu-history-mode corfu-popupinfo-mode)
   :init
   (global-corfu-mode)
   (corfu-history-mode)
@@ -296,7 +291,6 @@
         ("<backtab>" . corfu-reset)))
 (use-package prescient
   :ensure t
-  :commands (prescient-persist-mode)
   :custom
   (completion-category-overrides '((file (styles basic))))
   :config
@@ -633,7 +627,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package projectile
   :ensure t
-  :commands (projectile-mode)
   :config
   (projectile-mode))
 (use-package treemacs
@@ -647,14 +640,12 @@
 (use-package treemacs-projectile
   :ensure t
   :after (treemacs projectile)
-  :commands (treemacs-projectile)
   :config
   (treemacs-projectile))
 ;; treemacs theme
 (use-package treemacs-nerd-icons
   :ensure t
   :after (treemacs nerd-icons)
-  :commands (treemacs-load-theme)
   :config
   (treemacs-load-theme "nerd-icons"))
 
@@ -712,7 +703,6 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (use-package undo-tree
   :ensure t
-  :commands (global-undo-tree-mode)
   :init
   ;; if the directory no exist, then make it
   (defvar undo-tree-dir

@@ -35,7 +35,7 @@
         ;; ms: additonal color
         (lightblue "#7abeff")
 
-        (scale 0.95)
+        (scale 1.0)
         )
     
     (custom-set-faces
