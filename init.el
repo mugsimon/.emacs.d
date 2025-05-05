@@ -31,6 +31,10 @@
     ;; Create the flag file
     (write-region "" nil icons-fonts-setup-done)))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ basic                                                         ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+(setq use-short-answers t)
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ screen - start up message                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 (setopt inhibit-startup-message t)
@@ -803,6 +807,11 @@
   ;; 無変換キーでmozcオフ
   (mozc-mode . (lambda ()
  	         (define-key mozc-mode-map [muhenkan] 'ime-off))))
+(use-package mozc-popup
+  :ensure t
+  :after (mozc)
+  :custom
+  (mozc-candidate-style 'popup))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ which key                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
