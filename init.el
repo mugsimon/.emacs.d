@@ -664,7 +664,10 @@
   ;; (git-gutter:added    ((t (:background "#50fa7b"))))
   ;; (git-gutter:deleted  ((t (:background "#ff79c6"))))
   )
-
+(use-package nerd-icons-dired
+  :ensure t
+  :after (nerd-icons)
+  :hook (dired-mode . nerd-icons-dired-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
