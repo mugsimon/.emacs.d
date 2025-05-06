@@ -793,6 +793,7 @@
       (toggle-input-method)))
   :custom
   (default-input-method "japanese-mozc")
+  (mozc-leim-title "あ")
   :bind
   (;; 半角/全角キーで切り替え
    ([zenkaku-hankaku] . toggle-input-method)
