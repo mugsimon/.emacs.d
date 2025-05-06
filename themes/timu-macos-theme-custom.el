@@ -34,8 +34,6 @@
         (white     "#ffffff")
         ;; ms: additonal color
         (lightblue "#7abeff")
-
-        (scale 1.0)
         )
     
     (custom-set-faces
@@ -52,29 +50,13 @@
      `(tab-line-tab-current ((,class (:background ,bg :foreground ,fg :weight bold))))
      `(tab-line-tab-inactive ((,class (:background ,macos0 :foreground ,fg-other))))
      `(tab-line-tab-modified ((,class (:foreground ,darkblue :slant italic))))
-     ;; modeline
-     `(mode-line ((,class (,@(timu-macos-mode-line-active-border blue) ,@(timu-macos-mode-line-active-background bg-org) :foreground ,fg :distant-foreground ,bg :height ,scale))))
-     `(mode-line-buffer-id ((,class (:weight bold :height ,scale))))
-     `(mode-line-emphasis ((,class (:foreground ,magenta :weight bold :underline ,darkcyan :height ,scale))))
-     `(mode-line-highlight ((,class (:foreground ,magenta :weight bold :underline ,darkcyan :height ,scale))))
-     `(mode-line-inactive ((,class (,@(timu-macos-mode-line-inactive-border macos4) ,@(timu-macos-mode-line-inactive-background bg-org) :foreground ,macos4 :distant-foreground ,macos4 :height ,scale))))
-     ;; doom-modeline
-     `(doom-modeline-bar ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-buffer-major-mode ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-buffer-path ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-eldoc-bar ((,class (:background ,green :height ,scale))))
-     `(doom-modeline-evil-emacs-state ((,class (:foreground ,darkblue :weight bold :height ,scale))))
-     `(doom-modeline-evil-insert-state ((,class (:foreground ,red :weight bold :height ,scale))))
-     `(doom-modeline-evil-motion-state ((,class (:foreground ,purple :weight bold :height ,scale))))
-     `(doom-modeline-evil-normal-state ((,class (:foreground ,green :weight bold :height ,scale))))
-     `(doom-modeline-evil-operator-state ((,class (:foreground ,magenta :weight bold :height ,scale))))
-     `(doom-modeline-evil-replace-state ((,class (:foreground ,teal :weight bold :height ,scale))))
-     `(doom-modeline-evil-visual-state ((,class (:foreground ,yellow :weight bold :height ,scale))))
-     `(doom-modeline-highlight ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-input-method ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-panel ((,class (:foreground ,magenta :height ,scale))))
-     `(doom-modeline-project-dir ((,class (:foreground ,blue :weight bold :height ,scale))))
-     `(doom-modeline-project-root-dir ((,class (:foreground ,magenta :height ,scale))))
+     ;; mozc
+     `(mozc-cand-overlay-focused-face ((,class :foreground ,magenta :background ,macos1)))
+     `(mozc-cand-overlay-odd-face ((,class :background ,bg-other)))
+     `(mozc-cand-overlay-even-face ((,class :background ,bg-other)))
+     `(mozc-cand-overlay-footer-face ((,class :foreground ,blue :background ,bg-org)))
+     `(mozc-cand-overlay-description-face ((,class :foreground ,yellow :background ,bg-other)))
+     `(mozc-preedit-selected-face ((,class :foreground ,magenta)))
      )
     )
   )
