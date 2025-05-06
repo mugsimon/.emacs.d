@@ -21,7 +21,7 @@ This repository contains my personal Emacs configuration, tailored to enhance pr
     ```
 2. Install Emacs
     ``` shell
-    sudo snap install emacs --classic
+    sudo apt install emacs
     ```
 ## Install Dependencies
 ``` shell
@@ -29,7 +29,7 @@ sudo apt update
 ```
 1. Install emacs mozc (for Japanese user)
     ``` shell
-    sudo apt install emacs-mozc-bin
+    sudo apt install emacs-mozc
     ```
 2. Install markdown
     ``` shell
