@@ -763,6 +763,9 @@
 (global-set-key (kbd "<mouse-8>") 'xref-go-back)
 ;; M-C-,
 (global-set-key (kbd "<mouse-9>") 'xref-go-forward)
+
+;; Backspace
+(global-set-key (kbd "C-h") 'delete-backward-char)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab space                                                     ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -800,14 +803,12 @@
    ;; 変換キーでmozcオン
    ([henkan] . ime-on)
    ;; 無変換キーでmozcオフ
+   ([muhenkan] . ime-off)
+   :map mozc-mode-map
    ([muhenkan] . ime-off))
   :config
   ;; フォント
-  (set-fontset-font t 'japanese-jisx0208 "Migu 1M")
-  :hook
-  ;; 無変換キーでmozcオフ
-  (mozc-mode . (lambda ()
- 	         (define-key mozc-mode-map [muhenkan] 'ime-off))))
+  (set-fontset-font t 'japanese-jisx0208 "Migu 1M"))
 (use-package mozc-popup
   :ensure t
   :after (mozc)
