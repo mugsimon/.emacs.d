@@ -394,7 +394,8 @@
   :custom
   (markdown-split-window-direction 'right)
   (markdown-live-preview-delete-export 'delete-on-export)
-  (truncate-lines t))
+  :hook
+  (gfm-mode . (lambda () (setopt truncate-lines t))))
 ;; cmake
 (use-package cmake-mode
   :ensure t
@@ -419,6 +420,12 @@
 ;; SSH config
 (use-package ssh-config-mode
   :ensure t)
+;; javascript
+(use-package js
+  :mode
+  ("\\.js\\'" . js-mode)
+  :custom
+  (js-indent-level 2))
 ;; python
 (use-package python-mode
   :ensure t
