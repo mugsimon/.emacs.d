@@ -285,7 +285,7 @@
   :custom
   (corfu-cycle t)
   (corfu-auto t)
-  (corfu-auto-delay 0.1)
+  (corfu-auto-delay 0.0)
   (corfu-auto-prefix 1)
   :bind
   (:map corfu-map
