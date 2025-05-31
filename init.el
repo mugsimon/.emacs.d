@@ -250,7 +250,7 @@
                '((dockerfile-mode dockerfile-ts-mode) . ("docker-langserver" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; npm i -g vscode-langservers-extracted
-               '((html-mode html-ts-mode) . ("vscode-html-language-server" "--stdio")))
+               '((mhtml-mode html-mode html-ts-mode) . ("vscode-html-language-server" "--stdio")))
   (add-to-list 'eglot-server-programs
                ;; sudo snap install racket
                ;; raco pkg install racket-langserver
