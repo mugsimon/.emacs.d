@@ -232,6 +232,24 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;;; @ github copilot                                                ;;;
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
+;; npm install @github/copilot-language-server
+(use-package copilot
+  :ensure t
+  ;; :hook
+  ;; (prg-mode . copilot-mode)
+  :config
+  (define-key copilot-completion-map (kbd "<tab>") nil)
+  (define-key copilot-completion-map (kbd "TAB") nil)
+  (define-key copilot-completion-map (kbd "C-TAB") nil)
+  (define-key copilot-completion-map (kbd "C-<tab>") nil)
+  :bind
+  (:map copilot-completion-map
+        ("M-<return>" . 'copilot-accept-completion)
+        ("C-<return>" . 'copilot-accept-completion-by-word)))
+
+;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Eglot
