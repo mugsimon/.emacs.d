@@ -234,12 +234,12 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ github copilot                                                ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-;; npm install @github/copilot-language-server
 (use-package copilot
   :ensure t
-  ;; :hook
-  ;; (prg-mode . copilot-mode)
+  :hook
+  (prg-mode . copilot-mode)
   :config
+  ;; disable tab key bind
   (define-key copilot-completion-map (kbd "<tab>") nil)
   (define-key copilot-completion-map (kbd "TAB") nil)
   (define-key copilot-completion-map (kbd "C-TAB") nil)
@@ -249,6 +249,14 @@
         ("M-<return>" . 'copilot-accept-completion)
         ("C-<return>" . 'copilot-accept-completion-by-word)))
 
+(use-package copilot-chat
+  :ensure t
+  :bind
+  (:map global-map
+        ("C-c C-y" . copilot-chat-yank)
+        ("C-c M-y" . copilot-chat-yank-pop)
+        ("C-c C-M-y" . (lambda() (interactive)
+                         (copilot-chat-yank-pop -1)))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ Language Server Protocol                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
