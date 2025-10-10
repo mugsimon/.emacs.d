@@ -116,14 +116,17 @@
 ;; keep kersol when scrolling
 (setopt scroll-preserve-screen-position nil)
 ;; small scroll
-(setopt scroll-conservatively 10000)
+;; (setopt scroll-conservatively 10000)
 ;; line overlay when scrolling
-(setopt next-screen-context-lines 1)
-;; keep redisplay
-(setopt redisplay-dont-pause t)
+;; (setopt next-screen-context-lines 1)
+;; disable redisplay
+(setopt redisplay-dont-pause nil)
 
-;; mouse scroll
-(setopt mouse-wheel-progressive-speed t)
+;; disable progressive speed
+(setopt mouse-wheel-progressive-speed nil)
+
+;; scroll margin
+(setopt scroll-margin 1)
 
 ;; horizontal scroll margin
 (setopt hscroll-margin 1)
@@ -132,6 +135,9 @@
 ;; horizontal mouse scroll
 (setopt mouse-wheel-tilt-scroll t)
 (setopt mouse-wheel-flip-direction t)
+(setopt pixel-scroll-precision-interpolation-factor 1.0) ;; default 2.0
+;; 
+(pixel-scroll-precision-mode t)
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
