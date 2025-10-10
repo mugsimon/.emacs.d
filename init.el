@@ -849,9 +849,10 @@
    ([muhenkan] . ime-off)
    :map mozc-mode-map
    ([muhenkan] . ime-off))
-  :config
+  :hook
   ;; フォント
-  (set-fontset-font t 'japanese-jisx0208 "Migu 1M"))
+  (after-init . (lambda () (set-fontset-font t 'japanese-jisx0208 "Migu 1M"))))
+  
 (use-package mozc-popup
   :ensure t
   :after (mozc)
