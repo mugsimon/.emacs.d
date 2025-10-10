@@ -262,12 +262,16 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; Eglot
 (use-package eglot
+  :ensure t
   :after treesit
   :config
   ;; # npm install: https://nodejs.org/ja/download
   (add-to-list 'eglot-server-programs
                ;; npm install -g pyright
-               '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio")))
+               '((python-mode python-ts-mode) . ("pyright-langserver" "--stdio"))
+               ;; npm install -g basedpyright
+               ;; '((python-mode python-ts-mode) . ("basedpyright-langserver" "--stdio"))
+               )
   (add-to-list 'eglot-server-programs
                ;; sudo apt install clangd
                '((c-mode c++-mode c-ts-mode c++-ts-mode) . ("clangd")))
