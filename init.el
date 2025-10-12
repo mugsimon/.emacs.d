@@ -114,7 +114,7 @@
 ;;; @ scroll                                                        ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;; keep kersol when scrolling
-(setopt scroll-preserve-screen-position nil)
+(setopt scroll-preserve-screen-position t)
 ;; small scroll
 ;; (setopt scroll-conservatively 10000)
 ;; line overlay when scrolling
@@ -126,18 +126,18 @@
 (setopt mouse-wheel-progressive-speed nil)
 
 ;; scroll margin
-(setopt scroll-margin 1)
+(setopt scroll-margin 0)
 
 ;; horizontal scroll margin
-(setopt hscroll-margin 1)
-(setopt hscroll-step 1)
+(setopt hscroll-margin 0)
 
 ;; horizontal mouse scroll
 (setopt mouse-wheel-tilt-scroll t)
 (setopt mouse-wheel-flip-direction t)
-(setopt pixel-scroll-precision-interpolation-factor 1.0) ;; default 2.0
-;; 
+
+;; pixel scroll
 (pixel-scroll-precision-mode t)
+(setopt pixel-scroll-precision-interpolation-factor 1.0) ;; default 2.0
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ minibuffers                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -295,6 +295,8 @@
   (eglot-ignored-server-capabilities
    ;; disable eglot symbol highlight to avoid conflict with highlight-symbol
    '(:documentHighlightProvider))
+  ;; disable event logging
+  (eglot-events-buffer-config '(:size 0 :format null))
   (read-process-output-max (* 4 1024 1024)) ;; 4MB
   :hook
   (((python-mode python-ts-mode) . eglot-ensure)
@@ -579,7 +581,8 @@
            (venv-list (directory-files pyright-venv-path nil "^[^.]"))
            (venv (completing-read "Choose Python environment: " venv-list))
            (config `(("venvPath" . ,venv-path)
-                     ("venv" . ,venv)))
+                     ("venv" . ,venv)
+                     ("analyzeUnannotatedFunctions" . ,json-false)))
            (json-content (let ((json-object-type 'alist)
                                (json-array-type 'list)
                                (json-key-type 'string))
@@ -718,7 +721,7 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ GC Threshold                                                  ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(setopt gc-cons-threshold (* 100 1024 1024)) ;100Mb ; default (* 800 1024)
+(setopt gc-cons-threshold (* 128 1024 1024)) ; 128Mb ; default (* 800 1024)
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setopt gc-cons-threshold (* 16 1024 1024))))
