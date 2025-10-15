@@ -368,7 +368,8 @@
       (javascript-mode . js-ts-mode)
       (css-mode . css-ts-mode)
       (php-mode . php-ts-mode)
-      (js-json-mode . json-ts-mode))
+      (js-json-mode . json-ts-mode)
+      (matlab-mode . matlab-ts-mode))
     "Alist mapping classic major modes to Tree-sitter-based modes.")
   (setopt treesit-language-source-alist
           '((python     "https://github.com/tree-sitter/tree-sitter-python")
@@ -379,6 +380,7 @@
             (css        "https://github.com/tree-sitter/tree-sitter-css")
             (php        "https://github.com/tree-sitter/tree-sitter-php")
             (json       "https://github.com/tree-sitter/tree-sitter-json")
+            (matlab     "https://github.com/acristoffers/tree-sitter-matlab")
             (scheme     "https://github.com/6cdh/tree-sitter-scheme")))
   (dolist (treesit-mode-pair treesit-mode-pair-alist)
     (let ((lang (intern
@@ -633,7 +635,7 @@
                         (if remote
                             (format "ssh %s %s --version | sed 's/$/(%s)/'" remote python-path venv-name)
                           (format "%s --version | sed 's/$/(%s)/'" python-path venv-name)))
-                       (script-dir (expand-file-name ".cache" user-emacs-directory))
+                       (script-dir (expand-file-name ".cache/pyright-env" user-emacs-directory))
                        (script-path (expand-file-name (format "modeline-python-version-%s-%s.sh"
                                                               (or remote "local")
                                                               venv-name)
