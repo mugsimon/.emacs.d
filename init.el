@@ -71,7 +71,8 @@
   :hook
   (prog-mode . display-line-numbers-mode)
   :custom
-  (display-line-numbers-width-start t))
+  (display-line-numbers-width-start t)
+  (display-line-numbers-grow-only t))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ file - backup                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -166,7 +167,9 @@
   :ensure t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic)))))
+  (completion-category-overrides '((eglot (styles . (orderless flex)))))
+  ;; (completion-category-overrides '((file (styles basic))))
+  )
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ beep off                                                      ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -294,7 +297,9 @@
   :custom
   (eglot-ignored-server-capabilities
    ;; disable eglot symbol highlight to avoid conflict with highlight-symbol
-   '(:documentHighlightProvider))
+   '(:documentHighlightProvider
+     :inlayHintProvider))
+  (eglot-send-changes-idle-time 2.0)
   ;; disable event logging
   (eglot-events-buffer-config '(:size 0 :format null))
   (read-process-output-max (* 4 1024 1024)) ;; 4MB
@@ -351,7 +356,13 @@
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ flymake                                                       ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
-(add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
+;; (add-hook 'prog-mode-hook 'flymake-mode) ; use flymake in program-mode
+(use-package flymake
+  :ensure t
+  :hook
+  (prog-mode . flymake-mode)
+  :custom
+  (flymake-no-changes-timeout 2.0))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tree-sitter                                                   ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
@@ -583,8 +594,7 @@
            (venv-list (directory-files pyright-venv-path nil "^[^.]"))
            (venv (completing-read "Choose Python environment: " venv-list))
            (config `(("venvPath" . ,venv-path)
-                     ("venv" . ,venv)
-                     ("analyzeUnannotatedFunctions" . ,json-false)))
+                     ("venv" . ,venv)))
            (json-content (let ((json-object-type 'alist)
                                (json-array-type 'list)
                                (json-key-type 'string))
@@ -726,7 +736,7 @@
 (setopt gc-cons-threshold (* 128 1024 1024)) ; 128Mb ; default (* 800 1024)
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setopt gc-cons-threshold (* 16 1024 1024))))
+            (setopt gc-cons-threshold (* 32 1024 1024))))
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
 ;;; @ tab line mode                                                 ;;;
 ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ;;;
