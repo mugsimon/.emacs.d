@@ -594,14 +594,22 @@
            (venv-list (directory-files pyright-venv-path nil "^[^.]"))
            (venv (completing-read "Choose Python environment: " venv-list))
            (config `(("venvPath" . ,venv-path)
-                     ("venv" . ,venv)))
+                     ("venv" . ,venv)
+                     ;; ("typeCheckingMode" . "off")
+                     ("diagnosticMode" . "openFilesOnly")
+                     ("typeCheckingMode" . "basic")
+                     ;; ("useLibraryCodeForTypes" . :json-false)
+                     ("autoSearchPaths" . :json-false)
+                     ))
            (json-content (let ((json-object-type 'alist)
                                (json-array-type 'list)
                                (json-key-type 'string))
                            (json-encode config))))
       ;; Write
       (with-temp-file config-path
-        (insert json-content))
+        (insert json-content)
+        (json-pretty-print (point-min) (point-max))
+        )
       (message "Saved pyrightconfig.json with environment: %s (under %s/%s)"
                venv venv-path venv)
       ;; Recconect Eglot
@@ -866,8 +874,9 @@
    ([muhenkan] . ime-off))
   :hook
   ;; フォント
-  (after-init . (lambda () (set-fontset-font t 'japanese-jisx0208 "Migu 1M"))))
-  
+  (after-init . (lambda () (set-fontset-font t 'japanese-jisx0208 "Migu 1M")))
+  )
+
 (use-package mozc-popup
   :ensure t
   :after (mozc)
