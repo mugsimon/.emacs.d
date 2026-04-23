@@ -38,7 +38,7 @@
   (defconst ms/auto-save-dir
     (expand-file-name "var/auto-save/" user-emacs-directory))
   (defun ms/truncate-on ()
-    (setopt truncate-lines t))
+    (setq-local truncate-lines t))
   (defun ms/move-beginning-of-line ()
     "Toggle between indentation and beginning of line."
     (interactive)
