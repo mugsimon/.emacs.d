@@ -806,7 +806,8 @@
                   (setq doom-modeline-env-python-executable script-path))
               (setq doom-modeline-env-python-executable nil)))
         (setq doom-modeline-env-python-executable nil))
-      (force-mode-line-update t)))
+      (when (fboundp 'doom-modeline-env-update-python)
+        (doom-modeline-env-update-python))))
 
   (defun ms/python-write-pyright-config (venv-path venv-name)
     "Write pyrightconfig.json using VENV-PATH and VENV-NAME."
@@ -857,7 +858,6 @@
       (ms/python-add-pyrightconfig-to-gitignore)
       (ms/update-doom-modeline-python-version)
       (ms/python-reconnect-eglot-if-needed)
-      (revert-buffer t t)
       (message "Updated pyrightconfig.json for %s/%s" venv-path venv))))
 
 ;; --------------------------------------------------
