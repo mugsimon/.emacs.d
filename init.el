@@ -80,7 +80,9 @@
    (display-line-numbers-grow-only . t)
    ;; edit
    (indent-tabs-mode . nil)
-   (tab-width . 4))
+   (tab-width . 4)
+   ;; auto revert
+   (global-auto-revert-mode . t))
   :config
   ;; backup
   (make-directory ms/backup-dir t)
