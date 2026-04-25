@@ -19,10 +19,12 @@
 
   (package-initialize)
 
-  (unless (package-installed-p 'leaf)
-    (unless package-archive-contents
-      (package-refresh-contents))
-    (package-install 'leaf))
+  (dolist (pkg '(leaf leaf-keywords))
+    (unless (package-installed-p pkg)
+      (unless package-archive-contents
+	(package-refresh-contents))
+      (package-install pkg)))
+
 
   (require 'leaf)
   (require 'leaf-keywords)
