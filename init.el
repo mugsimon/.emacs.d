@@ -919,9 +919,18 @@
   ((default-input-method . "japanese-mozc")
    (mozc-leim-title . "あ"))
   :bind
-  (([zenkaku-hankaku] . toggle-input-method)
-   ([henkan] . ms/ime-on)
-   ([muhenkan] . ms/ime-off)))
+  (([henkan] . ms/ime-on)
+   ([muhenkan] . ms/ime-off)
+   (mozc-mode-map :package mozc
+                  ([muhenkan] . ms/ime-off))))
+
+(leaf mozc-popup
+  :ensure t
+  :when ms/os-linux-p
+  :require t
+  :after mozc
+  :custom
+  (mozc-candidate-style . 'popup))
 
 ;; --------------------------------------------------
 ;; custom file load                                              ;;;
