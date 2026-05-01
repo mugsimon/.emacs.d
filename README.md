@@ -29,7 +29,7 @@ sudo apt update
 ```
 1. Install emacs mozc (for Japanese user)
     ``` shell
-    sudo apt install emacs-mozc
+    sudo apt install emacs-mozc-bin
     ```
 2. Install markdown
     ``` shell
