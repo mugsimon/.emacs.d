@@ -91,7 +91,9 @@
         auto-save-file-name-transforms `((".*" ,ms/auto-save-dir t))
         auto-save-list-file-prefix
         (expand-file-name ".saves-" ms/auto-save-dir))
-  ;; 
+  ;; disable tool bar
+  (tool-bar-mode -1)
+  ;; window transparency
   (add-to-list 'default-frame-alist '(alpha . (90 . 85)))
   ;; scroll
   (pixel-scroll-precision-mode 1)
