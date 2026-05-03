@@ -598,13 +598,35 @@
   :preface
   (defun ms/gfm-mode-setup ()
     (setq-local truncate-lines t))
+  (defun ms/markdown-command-installed-p ()
+    "Return non-nil if markdown command exists."
+    (executable-find markdown-command))
+  (defun ms/markdown-install-message ()
+    "Show OS-specific markdown install message."
+    (cond
+     (ms/os-mac-p
+      "Markdown command is not installed. On macOS, install one with: brew install pandoc")
+     (ms/os-linux-p
+      "Markdown command is not installed. On Ubuntu, install one with: sudo apt install pandoc")
+     (t
+      "Markdown command is not installed. Please install markdown or pandoc.")))
+  (defun ms/markdown-preview ()
+    "Start markdown preview if markdown command is available."
+    (interactive)
+    (if (ms/markdown-command-installed-p)
+        (markdown-live-preview-mode 1)
+      (message "%s" (ms/markdown-install-message))))
   :mode
   (("\\.markdown\\'" . markdown-mode)
-   ("\\.md\\'" . markdown-mode)
+   ("\\.md\\'" . gfm-mode)
    ("README\\.md\\'" . gfm-mode))
   :custom
-  ((markdown-split-window-direction . 'right)
+  ((markdown-command . "pandoc")
+   (markdown-split-window-direction . 'right)
    (markdown-live-preview-delete-export . 'delete-on-export))
+  :bind
+  (:markdown-mode-map
+   ("C-c C-c p" . ms/markdown-preview))
   :hook
   (gfm-mode-hook . ms/gfm-mode-setup))
 
